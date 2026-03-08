@@ -1,11 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { authClient } from "@/lib/auth-client";
+import {
+  getFloatingTabBarContentPadding,
+  horizontalScreenPadding,
+  screenTopPadding,
+} from "@/lib/layout";
 import { cardShadow, formatDate, getInitials, tabbyColors } from "@/lib/ui";
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: session, isPending } = authClient.useSession();
 
   const handleLogout = async () => {
@@ -30,7 +37,11 @@ export default function ProfileScreen() {
   return (
     <ScrollView
       className="flex-1 bg-tabby-canvas"
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 120 }}
+      contentContainerStyle={{
+        paddingHorizontal: horizontalScreenPadding,
+        paddingTop: insets.top + screenTopPadding,
+        paddingBottom: getFloatingTabBarContentPadding(insets.bottom),
+      }}
       showsVerticalScrollIndicator={false}
     >
       <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
