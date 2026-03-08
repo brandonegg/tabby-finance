@@ -7,7 +7,7 @@ export default function Index() {
   if (isPending) return null;
 
   if (session) {
-    return <Redirect href="/(app)" />;
+    return <Redirect href="/(app)/(tabs)" />;
   }
 
   return <Redirect href="/(auth)/login" />;

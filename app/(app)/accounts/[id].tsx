@@ -189,7 +189,9 @@ function formatCurrency(amount: string, currency: string): string {
 }
 
 function formatDate(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleDateString("en-US", {
+  const normalizedTimestamp = timestamp > 1_000_000_000_000 ? timestamp : timestamp * 1000;
+
+  return new Date(normalizedTimestamp).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
