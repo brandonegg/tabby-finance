@@ -1,7 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { apiUrl } from "@/lib/api";
+import { cardShadow, formatCurrency, formatDate, formatRelativeDate, tabbyColors } from "@/lib/ui";
 
 interface Transaction {
   id: string;
@@ -42,18 +44,26 @@ export default function AccountTransactionsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [pendingOnly, setPendingOnly] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTransactions = useCallback(
     async (offset = 0, append = false) => {
       try {
-        const res = await fetch(
-          apiUrl(`/api/accounts/${id}/transactions?limit=${PAGE_SIZE}&offset=${offset}`),
-        );
+        const query = new URLSearchParams({
+          limit: String(PAGE_SIZE),
+          offset: String(offset),
+        });
+        if (pendingOnly) {
+          query.set("pending", "1");
+        }
+
+        const res = await fetch(apiUrl(`/api/accounts/${id}/transactions?${query.toString()}`));
         if (!res.ok) {
           const body = await res.json().catch(() => null);
           throw new Error(body?.error ?? `Request failed (${res.status})`);
         }
+
         const data: TransactionsResponse = await res.json();
         setAccount(data.account);
         setTxns((prev) => (append ? [...prev, ...data.transactions] : data.transactions));
@@ -63,11 +73,13 @@ export default function AccountTransactionsScreen() {
         setError(err instanceof Error ? err.message : "Failed to load transactions");
       }
     },
-    [id],
+    [id, pendingOnly],
   );
 
   useEffect(() => {
     setLoading(true);
+    setTxns([]);
+    setHasMore(true);
     void fetchTransactions(0).finally(() => setLoading(false));
   }, [fetchTransactions]);
 
@@ -78,43 +90,34 @@ export default function AccountTransactionsScreen() {
   }, [fetchTransactions]);
 
   const onEndReached = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore) {
+      return;
+    }
+
     setLoadingMore(true);
     await fetchTransactions(txns.length, true);
     setLoadingMore(false);
-  }, [loadingMore, hasMore, txns.length, fetchTransactions]);
+  }, [fetchTransactions, hasMore, loadingMore, txns.length]);
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1a73e8" />
+      <View className="flex-1 items-center justify-center bg-tabby-canvas">
+        <ActivityIndicator size="large" color={tabbyColors.accent} />
       </View>
     );
   }
 
-  if (error) {
+  if (error && account == null) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View className="flex-1 items-center justify-center bg-tabby-canvas px-6">
+        <Text className="text-center text-base leading-7 text-tabby-danger">{error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: account?.name ?? "Transactions" }} />
-
-      {account != null ? (
-        <View style={styles.header}>
-          <Text style={styles.accountName}>{account.name}</Text>
-          {account.orgName ? <Text style={styles.orgName}>{account.orgName}</Text> : null}
-          <Text style={styles.balance}>{formatCurrency(account.balance, account.currency)}</Text>
-          <Text style={styles.balanceLabel}>
-            Current Balance
-            {account.balanceDate ? ` (as of ${formatDate(account.balanceDate)})` : ""}
-          </Text>
-        </View>
-      ) : null}
+    <View className="flex-1 bg-tabby-canvas">
+      <Stack.Screen options={{ title: account?.name ?? "Activity" }} />
 
       <FlatList
         data={txns}
@@ -123,55 +126,192 @@ export default function AccountTransactionsScreen() {
           <TransactionRow txn={item} currency={account?.currency ?? "USD"} />
         )}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a73e8" />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={tabbyColors.accent}
+          />
         }
         onEndReached={onEndReached}
         onEndReachedThreshold={0.3}
+        ListHeaderComponent={
+          <View className="pb-4">
+            {account != null ? (
+              <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
+                <View className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-tabby-accent/30" />
+                <View className="absolute -left-6 bottom-0 h-20 w-20 rounded-full bg-white/10" />
+
+                <Text className="text-xs font-semibold uppercase tracking-[2px] text-white/60">
+                  {account.orgName ?? "Account activity"}
+                </Text>
+                <Text className="mt-3 text-3xl font-semibold text-tabby-paper">{account.name}</Text>
+                <Text className="mt-5 text-4xl font-semibold text-tabby-paper">
+                  {formatCurrency(account.balance, account.currency)}
+                </Text>
+                <Text className="mt-2 text-sm leading-6 text-white/72">
+                  Current balance as of {formatDate(account.balanceDate)}
+                </Text>
+
+                {account.availableBalance ? (
+                  <View className="mt-6 rounded-[22px] bg-white/10 px-4 py-4">
+                    <Text className="text-xs font-semibold uppercase tracking-[1.6px] text-white/60">
+                      Available balance
+                    </Text>
+                    <Text className="mt-2 text-2xl font-semibold text-tabby-paper">
+                      {formatCurrency(account.availableBalance, account.currency)}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
+
+            <View className="mt-5 flex-row items-center justify-between">
+              <View>
+                <Text className="text-2xl font-semibold text-tabby-ink">Recent activity</Text>
+                <Text className="mt-1 text-sm leading-6 text-tabby-muted">
+                  Review posted and pending transactions in one scroll.
+                </Text>
+              </View>
+            </View>
+
+            <View className="mt-4 flex-row gap-3">
+              <FilterChip
+                active={!pendingOnly}
+                label="All activity"
+                onPress={() => setPendingOnly(false)}
+              />
+              <FilterChip
+                active={pendingOnly}
+                label="Pending only"
+                onPress={() => setPendingOnly(true)}
+              />
+            </View>
+
+            {error ? (
+              <View className="mt-4 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+                <Text className="text-sm leading-6 text-tabby-danger">{error}</Text>
+              </View>
+            ) : null}
+          </View>
+        }
         ListFooterComponent={
           loadingMore ? (
-            <View style={styles.footer}>
-              <ActivityIndicator size="small" color="#1a73e8" />
+            <View className="py-6">
+              <ActivityIndicator size="small" color={tabbyColors.accent} />
             </View>
           ) : null
         }
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>No transactions found</Text>
+          <View
+            className="mt-4 items-center rounded-[28px] border border-dashed border-tabby-line bg-tabby-paper px-6 py-12"
+            style={cardShadow}
+          >
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-tabby-cloud">
+              <Ionicons name="receipt-outline" size={28} color={tabbyColors.accent} />
+            </View>
+            <Text className="mt-5 text-xl font-semibold text-tabby-ink">
+              {pendingOnly ? "No pending transactions" : "No transactions found"}
+            </Text>
+            <Text className="mt-2 text-center text-sm leading-6 text-tabby-muted">
+              {pendingOnly
+                ? "Pending card holds and in-flight bank updates will appear here."
+                : "Activity will appear here after your first sync."}
+            </Text>
           </View>
         }
-        contentContainerStyle={txns.length === 0 ? styles.emptyList : undefined}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 20,
+          paddingTop: 20,
+          paddingBottom: 40,
+        }}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
 
+function FilterChip({
+  active,
+  label,
+  onPress,
+}: {
+  active: boolean;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      className={`rounded-full px-4 py-3 ${active ? "bg-tabby-accent" : "bg-tabby-paper"}`}
+      style={active ? undefined : cardShadow}
+      onPress={onPress}
+    >
+      <Text className={`text-sm font-semibold ${active ? "text-tabby-paper" : "text-tabby-ink"}`}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
 function TransactionRow({ txn, currency }: { txn: Transaction; currency: string }) {
-  const amt = Number.parseFloat(txn.amount);
-  const isPositive = amt >= 0;
+  const amount = Number.parseFloat(txn.amount);
+  const isPositive = amount >= 0;
   const isPending = txn.pending === 1;
   const displayDate = txn.transactedAt ?? txn.posted;
 
+  const toneClass = isPending
+    ? "bg-tabby-warning-soft"
+    : isPositive
+      ? "bg-tabby-positive-soft"
+      : "bg-tabby-danger-soft";
+
+  const iconColor = isPending
+    ? tabbyColors.warning
+    : isPositive
+      ? tabbyColors.positive
+      : tabbyColors.danger;
+
+  const iconName: keyof typeof Ionicons.glyphMap = isPending
+    ? "time-outline"
+    : isPositive
+      ? "arrow-down-outline"
+      : "arrow-up-outline";
+
   return (
-    <View style={[styles.txnRow, isPending && styles.txnRowPending]}>
-      <View style={styles.txnLeft}>
-        <Text style={[styles.txnDescription, isPending && styles.txnPendingText]}>
-          {txn.description}
-        </Text>
-        <View style={styles.txnMeta}>
-          <Text style={styles.txnDate}>{formatDate(displayDate)}</Text>
-          {isPending && (
-            <View style={styles.pendingBadge}>
-              <Text style={styles.pendingBadgeText}>Pending</Text>
+    <View
+      className="mb-4 flex-row items-center rounded-[28px] border border-tabby-line bg-tabby-paper p-4"
+      style={cardShadow}
+    >
+      <View className={`h-12 w-12 items-center justify-center rounded-[18px] ${toneClass}`}>
+        <Ionicons name={iconName} size={20} color={iconColor} />
+      </View>
+
+      <View className="ml-4 flex-1">
+        <Text className="text-base font-semibold text-tabby-ink">{txn.description}</Text>
+        <View className="mt-2 flex-row items-center gap-2">
+          <Text className="text-sm text-tabby-muted">{formatDate(displayDate)}</Text>
+          {isPending ? (
+            <View className="rounded-full bg-tabby-warning-soft px-2 py-1">
+              <Text className="text-xs font-semibold uppercase tracking-[1.2px] text-tabby-warning">
+                Pending
+              </Text>
             </View>
+          ) : (
+            <Text className="text-sm text-tabby-muted">
+              Updated {formatRelativeDate(txn.updatedAt)}
+            </Text>
           )}
         </View>
       </View>
+
       <Text
-        style={[
-          styles.txnAmount,
-          isPositive ? styles.amountPositive : styles.amountNegative,
-          isPending && styles.txnPendingText,
-        ]}
+        className={`ml-4 text-base font-semibold ${
+          isPending
+            ? "text-tabby-warning"
+            : isPositive
+              ? "text-tabby-positive"
+              : "text-tabby-danger"
+        }`}
       >
         {isPositive ? "+" : ""}
         {formatCurrency(txn.amount, currency)}
@@ -179,137 +319,3 @@ function TransactionRow({ txn, currency }: { txn: Transaction; currency: string 
     </View>
   );
 }
-
-function formatCurrency(amount: string, currency: string): string {
-  const num = Number.parseFloat(amount);
-  try {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(num);
-  } catch {
-    return `${num.toFixed(2)} ${currency}`;
-  }
-}
-
-function formatDate(timestamp: number): string {
-  const normalizedTimestamp = timestamp > 1_000_000_000_000 ? timestamp : timestamp * 1000;
-
-  return new Date(normalizedTimestamp).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  accountName: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1a1a1a",
-  },
-  orgName: {
-    fontSize: 14,
-    color: "#888",
-    marginTop: 2,
-  },
-  balance: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1a73e8",
-    marginTop: 12,
-  },
-  balanceLabel: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 4,
-  },
-  txnRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  txnRowPending: {
-    backgroundColor: "#fafafa",
-  },
-  txnLeft: {
-    flex: 1,
-    marginRight: 12,
-  },
-  txnDescription: {
-    fontSize: 15,
-    color: "#1a1a1a",
-    fontWeight: "500",
-  },
-  txnPendingText: {
-    fontStyle: "italic",
-    opacity: 0.7,
-  },
-  txnMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
-    gap: 8,
-  },
-  txnDate: {
-    fontSize: 12,
-    color: "#888",
-  },
-  pendingBadge: {
-    backgroundColor: "#fef3c7",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  pendingBadgeText: {
-    fontSize: 10,
-    color: "#92400e",
-    fontWeight: "600",
-  },
-  txnAmount: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  amountPositive: {
-    color: "#16a34a",
-  },
-  amountNegative: {
-    color: "#dc2626",
-  },
-  errorText: {
-    color: "#e53e3e",
-    fontSize: 16,
-  },
-  empty: {
-    alignItems: "center",
-    paddingTop: 40,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#888",
-  },
-  emptyList: {
-    flexGrow: 1,
-  },
-  footer: {
-    padding: 16,
-    alignItems: "center",
-  },
-});
