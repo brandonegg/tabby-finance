@@ -2,7 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { apiUrl } from "@/lib/api";
+import {
+  getFloatingTabBarContentPadding,
+  horizontalScreenPadding,
+  screenTopPadding,
+} from "@/lib/layout";
 import { cardShadow, formatCurrency, formatDate, formatRelativeDate, tabbyColors } from "@/lib/ui";
 
 interface AccountSummary {
@@ -21,6 +27,7 @@ interface AccountsResponse {
 
 export default function AccountsListScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [accounts, setAccounts] = useState<Array<AccountSummary>>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -203,9 +210,9 @@ export default function AccountsListScreen() {
         }
         contentContainerStyle={{
           flexGrow: 1,
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          paddingBottom: 120,
+          paddingHorizontal: horizontalScreenPadding,
+          paddingTop: insets.top + screenTopPadding,
+          paddingBottom: getFloatingTabBarContentPadding(insets.bottom),
         }}
         showsVerticalScrollIndicator={false}
       />

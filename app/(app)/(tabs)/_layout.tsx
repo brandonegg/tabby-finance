@@ -1,11 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { floatingTabBarHeight, getFloatingTabBarBottom } from "@/lib/layout";
 import { tabbyColors } from "@/lib/ui";
 
 const TAB_TINT = tabbyColors.accent;
 const TAB_MUTED = tabbyColors.muted;
 
 export default function AppTabsLayout() {
+  const insets = useSafeAreaInsets();
+  const tabBarBottom = getFloatingTabBarBottom(insets.bottom);
+
   return (
     <Tabs
       screenOptions={{
@@ -16,8 +21,8 @@ export default function AppTabsLayout() {
           position: "absolute",
           left: 16,
           right: 16,
-          bottom: 16,
-          height: 72,
+          bottom: tabBarBottom,
+          height: floatingTabBarHeight,
           paddingTop: 10,
           paddingBottom: 12,
           borderTopWidth: 0,

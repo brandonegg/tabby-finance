@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { screenBottomPadding, screenTopPadding } from "@/lib/layout";
 import { cardShadow } from "@/lib/ui";
 
 interface AuthShellProps {
@@ -10,6 +12,8 @@ interface AuthShellProps {
 }
 
 export function AuthShell({ eyebrow, title, subtitle, children }: AuthShellProps) {
+  const insets = useSafeAreaInsets();
+
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-tabby-canvas"
@@ -21,7 +25,13 @@ export function AuthShell({ eyebrow, title, subtitle, children }: AuthShellProps
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 px-5 pb-8 pt-6">
+        <View
+          className="flex-1 px-5"
+          style={{
+            paddingTop: screenTopPadding,
+            paddingBottom: insets.bottom + screenBottomPadding,
+          }}
+        >
           <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
             <View className="absolute -right-8 -top-12 h-36 w-36 rounded-full bg-tabby-accent/25" />
             <View className="absolute -left-10 bottom-0 h-24 w-24 rounded-full bg-white/10" />

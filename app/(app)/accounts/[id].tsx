@@ -2,7 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { apiUrl } from "@/lib/api";
+import { horizontalScreenPadding, screenBottomPadding, screenTopPadding } from "@/lib/layout";
 import { cardShadow, formatCurrency, formatDate, formatRelativeDate, tabbyColors } from "@/lib/ui";
 
 interface Transaction {
@@ -38,6 +40,7 @@ const PAGE_SIZE = 50;
 
 export default function AccountTransactionsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [txns, setTxns] = useState<Array<Transaction>>([]);
   const [loading, setLoading] = useState(true);
@@ -221,9 +224,9 @@ export default function AccountTransactionsScreen() {
         }
         contentContainerStyle={{
           flexGrow: 1,
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          paddingBottom: 40,
+          paddingHorizontal: horizontalScreenPadding,
+          paddingTop: screenTopPadding,
+          paddingBottom: insets.bottom + screenBottomPadding,
         }}
         showsVerticalScrollIndicator={false}
       />
