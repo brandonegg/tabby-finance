@@ -1,6 +1,6 @@
+import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
-import { expo } from "@better-auth/expo";
 
 const db = new Database("tabby-finance.db");
 

@@ -1,16 +1,16 @@
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
+  View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginScreen() {

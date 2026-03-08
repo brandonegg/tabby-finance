@@ -1,6 +1,6 @@
 import { Redirect, Stack } from "expo-router";
-import { authClient } from "@/lib/auth-client";
 import { ActivityIndicator, View } from "react-native";
+import { authClient } from "@/lib/auth-client";
 
 export default function AppLayout() {
   const { data: session, isPending } = authClient.useSession();
