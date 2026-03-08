@@ -24,6 +24,9 @@ export default function AppLayout() {
         headerTintColor: "#fff",
         headerTitleStyle: { fontWeight: "bold" },
       }}
-    />
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="accounts/[id]" />
+    </Stack>
   );
 }
