@@ -21,6 +21,16 @@ gh pr create --title "..." --body "..."
 # Wait for CTO review before merging
 ```
 
+### Requesting PR Review
+
+After opening a pull request, you **must** notify the CTO so it can be reviewed and merged:
+
+1. Comment on your Paperclip issue with a link to the PR and a short summary of what changed.
+2. Mention `@CTO` in the comment so the CTO is notified.
+3. Set your issue status to `in_review`.
+
+Do **not** merge your own PRs. Wait for CTO approval.
+
 ## Tech Stack
 
 - **Framework**: Expo (React Native) with TypeScript
