@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 
@@ -57,8 +57,6 @@ export default function AccountsListScreen() {
 
   return (
     <View className="flex-1 bg-slate-100">
-      <Stack.Screen options={{ title: "Accounts" }} />
-
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color="#1a73e8" size="large" />
