@@ -40,6 +40,7 @@ This guide documents the mobile UI direction used in the current Expo mockup.
 - Card radius: `28px` to `32px`.
 - Buttons and chips: minimum `44px` tall for comfortable touch targets.
 - Floating tab bar leaves extra bottom padding in scroll containers.
+- Respect device safe-area insets on every screen edge. Top hero sections and bottom navigation should never rely on fixed padding alone.
 
 ## Component Patterns
 
@@ -73,3 +74,16 @@ This guide documents the mobile UI direction used in the current Expo mockup.
 - Tabs should stay short, stable, and icon-supported.
 - Empty states explain what will appear next rather than blaming the user.
 - Error messaging should be inline and readable without blocking the rest of the screen.
+
+## Accessibility Rules
+
+- Body copy, labels, badges, and helper text must meet at least `4.5:1` contrast against their surface.
+- Large numeric totals and decorative icons may drop to `3:1` only when they are not the sole carrier of meaning.
+- Text-only navigation affordances still need a `44x44` touch target through padding or hit slop.
+- Validation should appear inline near the relevant field or action. System alerts can supplement, but should not be the only error state.
+
+## Review Notes
+
+- Warning and danger text should use darker foreground tokens when rendered on soft semantic backgrounds.
+- Floating navigation and scroll containers should derive bottom spacing from safe-area insets instead of hard-coded values.
+- Secondary auth navigation should be styled as a tappable control, not only as linked text.
