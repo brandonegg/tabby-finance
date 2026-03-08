@@ -1,6 +1,14 @@
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  SectionList,
+  Text,
+  View,
+} from "react-native";
+import { apiUrl } from "@/lib/api";
 
 interface AccountSummary {
   id: string;
@@ -16,6 +24,11 @@ interface AccountsResponse {
   accounts: Array<AccountSummary>;
 }
 
+interface AccountSection {
+  title: string;
+  data: Array<AccountSummary>;
+}
+
 export default function AccountsListScreen() {
   const router = useRouter();
   const [accounts, setAccounts] = useState<Array<AccountSummary>>([]);
@@ -24,7 +37,7 @@ export default function AccountsListScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchAccounts = useCallback(async () => {
-    const response = await fetch("/api/accounts");
+    const response = await fetch(apiUrl("/api/accounts"));
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       throw new Error(body?.error ?? `Request failed (${response.status})`);
@@ -55,6 +68,19 @@ export default function AccountsListScreen() {
     }
   }, [fetchAccounts]);
 
+  const sections = accounts.reduce<Array<AccountSection>>((grouped, account) => {
+    const title = account.orgName?.trim() || "Other institutions";
+    const existing = grouped.find((section) => section.title === title);
+
+    if (existing) {
+      existing.data.push(account);
+      return grouped;
+    }
+
+    grouped.push({ title, data: [account] });
+    return grouped;
+  }, []);
+
   return (
     <View className="flex-1 bg-slate-100">
       <Stack.Screen options={{ title: "Accounts" }} />
@@ -64,9 +90,16 @@ export default function AccountsListScreen() {
           <ActivityIndicator color="#1a73e8" size="large" />
         </View>
       ) : (
-        <FlatList
-          data={accounts}
+        <SectionList
+          sections={sections}
           keyExtractor={(item) => item.id}
+          renderSectionHeader={({ section }) => (
+            <View className="mb-3 mt-2">
+              <Text className="text-xs font-semibold uppercase tracking-[1.5px] text-slate-500">
+                {section.title}
+              </Text>
+            </View>
+          )}
           renderItem={({ item }) => (
             <Pressable
               className="mb-3 rounded-2xl border border-slate-200 bg-white p-5"
@@ -120,6 +153,9 @@ export default function AccountsListScreen() {
               </Text>
               <Text className="mt-2 text-center text-sm leading-6 text-slate-500">
                 Connect a financial institution to start tracking balances and transactions.
+              </Text>
+              <Text className="mt-4 text-center text-sm font-medium text-slate-700">
+                The account connection flow is the next step in the SimpleFin rollout.
               </Text>
             </View>
           }
