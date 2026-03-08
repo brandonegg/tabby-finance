@@ -30,6 +30,7 @@ Required variables:
 | -------------------- | ------------------------------------ | ------------------------------- |
 | `BETTER_AUTH_SECRET`  | Secret key for authentication        | _(must be set)_                 |
 | `BETTER_AUTH_URL`     | Base URL for the auth server         | `http://localhost:8081`         |
+| `EXPO_PUBLIC_API_URL` | Public base URL used by Expo clients | `http://localhost:8081`         |
 
 ### 3. Run database migrations
 

@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { apiUrl } from "@/lib/api";
 
 interface Transaction {
   id: string;
@@ -47,7 +48,7 @@ export default function AccountTransactionsScreen() {
     async (offset = 0, append = false) => {
       try {
         const res = await fetch(
-          `/api/accounts/${id}/transactions?limit=${PAGE_SIZE}&offset=${offset}`,
+          apiUrl(`/api/accounts/${id}/transactions?limit=${PAGE_SIZE}&offset=${offset}`),
         );
         if (!res.ok) {
           const body = await res.json().catch(() => null);

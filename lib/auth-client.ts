@@ -1,9 +1,10 @@
 import { expoClient } from "@better-auth/expo/client";
 import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
+import { API_BASE_URL } from "@/lib/api";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8081",
+  baseURL: API_BASE_URL,
   plugins: [
     expoClient({
       scheme: "tabby-finance",
