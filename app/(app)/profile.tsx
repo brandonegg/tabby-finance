@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
 import { useRouter } from "expo-router";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { authClient } from "@/lib/auth-client";
 
 export default function ProfileScreen() {
@@ -36,9 +29,7 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {user?.name?.charAt(0).toUpperCase() ?? "?"}
-          </Text>
+          <Text style={styles.avatarText}>{user?.name?.charAt(0).toUpperCase() ?? "?"}</Text>
         </View>
       </View>
 
@@ -58,9 +49,7 @@ export default function ProfileScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Member Since</Text>
           <Text style={styles.value}>
-            {user?.createdAt
-              ? new Date(user.createdAt).toLocaleDateString()
-              : "—"}
+            {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
           </Text>
         </View>
       </View>
