@@ -1,16 +1,8 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { AuthShell } from "@/components/ui/auth-shell";
+import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginScreen() {
@@ -46,17 +38,20 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <AuthShell
+      eyebrow="Tabby Finance"
+      title="See the whole picture."
+      subtitle="Track every linked account in one calm mobile view, without losing trust or context."
     >
-      <View style={styles.card}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+      <Text className="text-2xl font-semibold text-tabby-ink">Sign in</Text>
+      <Text className="mt-2 text-sm leading-6 text-tabby-muted">
+        Use the email and password tied to your account.
+      </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
+      <View className="mt-6">
+        <FormField
+          label="Email"
+          placeholder="you@company.com"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -64,100 +59,40 @@ export default function LoginScreen() {
           autoCorrect={false}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
+        <FormField
+          label="Password"
+          placeholder="Enter your password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
-
-        <TouchableOpacity
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
-          )}
-        </TouchableOpacity>
-
-        <Link href="/(auth)/signup" asChild>
-          <TouchableOpacity style={styles.linkButton}>
-            <Text style={styles.linkText}>
-              Don't have an account? <Text style={styles.linkBold}>Sign Up</Text>
-            </Text>
-          </TouchableOpacity>
-        </Link>
       </View>
-    </KeyboardAvoidingView>
+
+      <Pressable
+        className={`mt-3 items-center rounded-2xl px-4 py-4 ${
+          loading ? "bg-tabby-accent/70" : "bg-tabby-accent"
+        }`}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fffaf2" />
+        ) : (
+          <Text className="text-base font-semibold text-tabby-paper">Sign In</Text>
+        )}
+      </Pressable>
+
+      <Text className="mt-4 text-center text-sm leading-6 text-tabby-muted">
+        Your credentials stay between you and your provider.
+      </Text>
+
+      <Link href="/(auth)/signup" asChild>
+        <Pressable className="mt-6 items-center">
+          <Text className="text-sm text-tabby-muted">
+            Need an account? <Text className="font-semibold text-tabby-accent">Create one</Text>
+          </Text>
+        </Pressable>
+      </Link>
+    </AuthShell>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#1a1a1a",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 24,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 14,
-    fontSize: 16,
-    marginBottom: 12,
-    backgroundColor: "#fafafa",
-  },
-  button: {
-    backgroundColor: "#1a73e8",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  linkButton: {
-    marginTop: 16,
-    alignItems: "center",
-  },
-  linkText: {
-    color: "#666",
-    fontSize: 14,
-  },
-  linkBold: {
-    color: "#1a73e8",
-    fontWeight: "600",
-  },
-});

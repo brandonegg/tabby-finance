@@ -1,16 +1,8 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { AuthShell } from "@/components/ui/auth-shell";
+import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignUpScreen() {
@@ -59,25 +51,28 @@ export default function SignUpScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <AuthShell
+      eyebrow="New workspace"
+      title="Build a steadier money routine."
+      subtitle="Create your account to review balances, institutions, and activity in one consistent mobile flow."
     >
-      <View style={styles.card}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+      <Text className="text-2xl font-semibold text-tabby-ink">Create account</Text>
+      <Text className="mt-2 text-sm leading-6 text-tabby-muted">
+        Start with the basics. You can connect institutions after setup.
+      </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
+      <View className="mt-6">
+        <FormField
+          label="Full name"
+          placeholder="Alex Morgan"
           value={name}
           onChangeText={setName}
           autoCapitalize="words"
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
+        <FormField
+          label="Email"
+          placeholder="you@company.com"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -85,108 +80,49 @@ export default function SignUpScreen() {
           autoCorrect={false}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
+        <FormField
+          label="Password"
+          placeholder="At least 8 characters"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
+        <FormField
+          label="Confirm password"
+          placeholder="Repeat your password"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
         />
-
-        <TouchableOpacity
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleSignUp}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
-          )}
-        </TouchableOpacity>
-
-        <Link href="/(auth)/login" asChild>
-          <TouchableOpacity style={styles.linkButton}>
-            <Text style={styles.linkText}>
-              Already have an account? <Text style={styles.linkBold}>Sign In</Text>
-            </Text>
-          </TouchableOpacity>
-        </Link>
       </View>
-    </KeyboardAvoidingView>
+
+      <Pressable
+        className={`mt-3 items-center rounded-2xl px-4 py-4 ${
+          loading ? "bg-tabby-accent/70" : "bg-tabby-accent"
+        }`}
+        onPress={handleSignUp}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fffaf2" />
+        ) : (
+          <Text className="text-base font-semibold text-tabby-paper">Create Account</Text>
+        )}
+      </Pressable>
+
+      <Text className="mt-4 text-center text-sm leading-6 text-tabby-muted">
+        Tabby keeps the UI simple and the financial context clear from day one.
+      </Text>
+
+      <Link href="/(auth)/login" asChild>
+        <Pressable className="mt-6 items-center">
+          <Text className="text-sm text-tabby-muted">
+            Already have an account?{" "}
+            <Text className="font-semibold text-tabby-accent">Sign in</Text>
+          </Text>
+        </Pressable>
+      </Link>
+    </AuthShell>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#1a1a1a",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 24,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 14,
-    fontSize: 16,
-    marginBottom: 12,
-    backgroundColor: "#fafafa",
-  },
-  button: {
-    backgroundColor: "#1a73e8",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  linkButton: {
-    marginTop: 16,
-    alignItems: "center",
-  },
-  linkText: {
-    color: "#666",
-    fontSize: 14,
-  },
-  linkBold: {
-    color: "#1a73e8",
-    fontWeight: "600",
-  },
-});

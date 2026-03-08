@@ -1,14 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  SectionList,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { apiUrl } from "@/lib/api";
+import { cardShadow, formatCurrency, formatDate, formatRelativeDate, tabbyColors } from "@/lib/ui";
 
 interface AccountSummary {
   id: string;
@@ -22,11 +17,6 @@ interface AccountSummary {
 
 interface AccountsResponse {
   accounts: Array<AccountSummary>;
-}
-
-interface AccountSection {
-  title: string;
-  data: Array<AccountSummary>;
 }
 
 export default function AccountsListScreen() {
@@ -68,131 +58,157 @@ export default function AccountsListScreen() {
     }
   }, [fetchAccounts]);
 
-  const sections = accounts.reduce<Array<AccountSection>>((grouped, account) => {
-    const title = account.orgName?.trim() || "Other institutions";
-    const existing = grouped.find((section) => section.title === title);
+  const currencies = Array.from(new Set(accounts.map((account) => account.currency))).filter(
+    Boolean,
+  );
+  const sharedCurrency = currencies.length === 1 ? currencies[0] : null;
+  const institutionCount = new Set(accounts.map((account) => account.orgName ?? account.id)).size;
+  const latestUpdate = Math.max(...accounts.map((account) => account.updatedAt), 0);
+  const totalBalance = accounts.reduce(
+    (sum, account) => sum + Number.parseFloat(account.balance),
+    0,
+  );
 
-    if (existing) {
-      existing.data.push(account);
-      return grouped;
-    }
-
-    grouped.push({ title, data: [account] });
-    return grouped;
-  }, []);
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-tabby-canvas">
+        <ActivityIndicator color={tabbyColors.accent} size="large" />
+      </View>
+    );
+  }
 
   return (
-    <View className="flex-1 bg-slate-100">
-      {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#1a73e8" size="large" />
-        </View>
-      ) : (
-        <SectionList
-          sections={sections}
-          keyExtractor={(item) => item.id}
-          renderSectionHeader={({ section }) => (
-            <View className="mb-3 mt-2">
-              <Text className="text-xs font-semibold uppercase tracking-[1.5px] text-slate-500">
-                {section.title}
-              </Text>
-            </View>
-          )}
-          renderItem={({ item }) => (
-            <Pressable
-              className="mb-3 rounded-2xl border border-slate-200 bg-white p-5"
-              onPress={() => router.push(`/accounts/${item.id}`)}
-            >
-              <View className="mb-4 flex-row items-start justify-between">
-                <View className="mr-4 flex-1">
-                  <Text className="text-lg font-semibold text-slate-900">{item.name}</Text>
-                  <Text className="mt-1 text-sm text-slate-500">
-                    {item.orgName ?? "Institution unavailable"}
-                  </Text>
-                </View>
-
-                <View className="rounded-full bg-blue-50 px-3 py-1">
-                  <Text className="text-xs font-medium uppercase tracking-wide text-blue-700">
-                    Live
-                  </Text>
-                </View>
+    <View className="flex-1 bg-tabby-canvas">
+      <FlatList
+        data={accounts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable
+            className="mb-4 rounded-[28px] border border-tabby-line bg-tabby-paper p-5"
+            style={cardShadow}
+            onPress={() => router.push(`/accounts/${item.id}`)}
+          >
+            <View className="flex-row items-start justify-between">
+              <View className="mr-4 flex-1">
+                <Text className="text-xs font-semibold uppercase tracking-[1.8px] text-tabby-muted">
+                  {item.orgName ?? "Linked institution"}
+                </Text>
+                <Text className="mt-2 text-2xl font-semibold text-tabby-ink">{item.name}</Text>
               </View>
 
-              <Text className="text-2xl font-bold text-slate-950">
-                {formatCurrency(item.balance, item.currency)}
-              </Text>
-              <Text className="mt-1 text-sm text-slate-500">
-                Current balance as of {formatDate(item.balanceDate)}
-              </Text>
-
-              <View className="mt-4 border-t border-slate-100 pt-4">
-                <Text className="text-sm text-slate-600">
-                  Last updated {formatDate(item.updatedAt)}
+              <View className="rounded-full bg-tabby-accent-soft px-3 py-2">
+                <Text className="text-xs font-semibold uppercase tracking-[1.2px] text-tabby-accent">
+                  Synced
                 </Text>
               </View>
-            </Pressable>
-          )}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a73e8" />
-          }
-          ListHeaderComponent={
-            <View className="mb-6">
-              <Text className="text-3xl font-bold text-slate-950">Connected accounts</Text>
-              <Text className="mt-2 text-base leading-6 text-slate-600">
-                Monitor balances across all linked institutions and tap into a full transaction
-                history.
-              </Text>
             </View>
-          }
-          ListEmptyComponent={
-            <View className="items-center rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12">
-              <Text className="text-lg font-semibold text-slate-900">
-                No accounts connected yet
-              </Text>
-              <Text className="mt-2 text-center text-sm leading-6 text-slate-500">
-                Connect a financial institution to start tracking balances and transactions.
-              </Text>
-              <Text className="mt-4 text-center text-sm font-medium text-slate-700">
-                The account connection flow is the next step in the SimpleFin rollout.
-              </Text>
-            </View>
-          }
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingHorizontal: 20,
-            paddingTop: 20,
-            paddingBottom: 32,
-          }}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
 
-      {error ? (
-        <View className="border-t border-rose-200 bg-rose-50 px-5 py-4">
-          <Text className="text-sm text-rose-700">{error}</Text>
-        </View>
-      ) : null}
+            <Text className="mt-6 text-3xl font-semibold text-tabby-ink">
+              {formatCurrency(item.balance, item.currency)}
+            </Text>
+            <Text className="mt-2 text-sm leading-6 text-tabby-muted">
+              Balance date {formatDate(item.balanceDate)}
+            </Text>
+
+            <View className="mt-5 flex-row items-center justify-between border-t border-tabby-line pt-4">
+              <Text className="text-sm text-tabby-muted">
+                Updated {formatRelativeDate(item.updatedAt)}
+              </Text>
+              <Ionicons name="chevron-forward" size={18} color={tabbyColors.muted} />
+            </View>
+          </Pressable>
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={tabbyColors.accent}
+          />
+        }
+        ListHeaderComponent={
+          <View className="pb-3">
+            <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
+              <View className="absolute -right-10 -top-14 h-40 w-40 rounded-full bg-tabby-accent/30" />
+              <View className="absolute -left-6 bottom-0 h-24 w-24 rounded-full bg-white/10" />
+
+              <Text className="text-xs font-semibold uppercase tracking-[2px] text-white/60">
+                Accounts overview
+              </Text>
+              <Text className="mt-4 text-4xl font-semibold leading-tight text-tabby-paper">
+                {sharedCurrency
+                  ? formatCurrency(totalBalance, sharedCurrency)
+                  : `${accounts.length} connected accounts`}
+              </Text>
+              <Text className="mt-3 max-w-[280px] text-sm leading-6 text-white/72">
+                {sharedCurrency
+                  ? "A single view of your linked balances, refreshed whenever you pull to sync."
+                  : "Your accounts use multiple currencies, so balances stay grouped by account for accuracy."}
+              </Text>
+
+              <View className="mt-7 flex-row gap-3">
+                <View className="flex-1 rounded-[24px] bg-white/10 px-4 py-4">
+                  <Text className="text-xs font-semibold uppercase tracking-[1.6px] text-white/60">
+                    Institutions
+                  </Text>
+                  <Text className="mt-2 text-2xl font-semibold text-tabby-paper">
+                    {institutionCount}
+                  </Text>
+                </View>
+                <View className="flex-1 rounded-[24px] bg-white/10 px-4 py-4">
+                  <Text className="text-xs font-semibold uppercase tracking-[1.6px] text-white/60">
+                    Last sync
+                  </Text>
+                  <Text className="mt-2 text-2xl font-semibold text-tabby-paper">
+                    {latestUpdate ? formatRelativeDate(latestUpdate) : "Pending"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="mt-5 flex-row items-center justify-between">
+              <View>
+                <Text className="text-2xl font-semibold text-tabby-ink">Linked accounts</Text>
+                <Text className="mt-1 text-sm leading-6 text-tabby-muted">
+                  Tap into any account to review recent activity.
+                </Text>
+              </View>
+              <View className="rounded-full bg-tabby-cloud px-3 py-2">
+                <Text className="text-xs font-semibold uppercase tracking-[1.4px] text-tabby-ink">
+                  Pull to refresh
+                </Text>
+              </View>
+            </View>
+
+            {error ? (
+              <View className="mt-5 rounded-[24px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+                <Text className="text-sm leading-6 text-tabby-danger">{error}</Text>
+              </View>
+            ) : null}
+          </View>
+        }
+        ListEmptyComponent={
+          <View
+            className="mt-4 items-center rounded-[28px] border border-dashed border-tabby-line bg-tabby-paper px-6 py-12"
+            style={cardShadow}
+          >
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-tabby-cloud">
+              <Ionicons name="wallet-outline" size={28} color={tabbyColors.accent} />
+            </View>
+            <Text className="mt-5 text-xl font-semibold text-tabby-ink">No accounts yet</Text>
+            <Text className="mt-2 text-center text-sm leading-6 text-tabby-muted">
+              Once the connection flow is enabled, linked accounts will show up here with balances
+              and recent activity.
+            </Text>
+          </View>
+        }
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 20,
+          paddingTop: 20,
+          paddingBottom: 120,
+        }}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
-}
-
-function formatCurrency(amount: string, currency: string): string {
-  const num = Number.parseFloat(amount);
-  try {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(num);
-  } catch {
-    return `${num.toFixed(2)} ${currency}`;
-  }
-}
-
-function normalizeTimestamp(timestamp: number): number {
-  return timestamp > 1_000_000_000_000 ? timestamp : timestamp * 1000;
-}
-
-function formatDate(timestamp: number): string {
-  return new Date(normalizeTimestamp(timestamp)).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }

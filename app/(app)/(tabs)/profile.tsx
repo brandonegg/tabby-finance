@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { authClient } from "@/lib/auth-client";
+import { cardShadow, formatDate, getInitials, tabbyColors } from "@/lib/ui";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -17,8 +19,8 @@ export default function ProfileScreen() {
 
   if (isPending) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1a73e8" />
+      <View className="flex-1 items-center justify-center bg-tabby-canvas">
+        <ActivityIndicator size="large" color={tabbyColors.accent} />
       </View>
     );
   }
@@ -26,114 +28,104 @@ export default function ProfileScreen() {
   const user = session?.user;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatarContainer}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{user?.name?.charAt(0).toUpperCase() ?? "?"}</Text>
-        </View>
-      </View>
+    <ScrollView
+      className="flex-1 bg-tabby-canvas"
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 120 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
+        <View className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-tabby-accent/30" />
+        <View className="absolute -left-8 bottom-0 h-20 w-20 rounded-full bg-white/10" />
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Profile Information</Text>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Name</Text>
-          <Text style={styles.value}>{user?.name ?? "—"}</Text>
+        <View className="h-16 w-16 items-center justify-center rounded-full bg-white/12">
+          <Text className="text-2xl font-semibold text-tabby-paper">{getInitials(user?.name)}</Text>
         </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Email</Text>
-          <Text style={styles.value}>{user?.email ?? "—"}</Text>
-        </View>
+        <Text className="mt-5 text-3xl font-semibold text-tabby-paper">
+          {user?.name ?? "Tabby member"}
+        </Text>
+        <Text className="mt-2 text-base leading-7 text-white/72">
+          {user?.email ?? "No email available"}
+        </Text>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Member Since</Text>
-          <Text style={styles.value}>
-            {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
+        <View className="mt-6 rounded-[24px] bg-white/10 px-4 py-4">
+          <Text className="text-xs font-semibold uppercase tracking-[1.6px] text-white/60">
+            Member since
+          </Text>
+          <Text className="mt-2 text-xl font-semibold text-tabby-paper">
+            {user?.createdAt ? formatDate(new Date(user.createdAt).getTime()) : "Recently"}
           </Text>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Sign Out</Text>
-      </TouchableOpacity>
+      <View
+        className="mt-5 rounded-[28px] border border-tabby-line bg-tabby-paper p-5"
+        style={cardShadow}
+      >
+        <Text className="text-xl font-semibold text-tabby-ink">Account details</Text>
+        <Text className="mt-2 text-sm leading-6 text-tabby-muted">
+          Keep personal details and sign-in information easy to verify at a glance.
+        </Text>
+
+        <DetailRow label="Display name" value={user?.name ?? "Not set"} />
+        <DetailRow label="Email" value={user?.email ?? "Not set"} />
+        <DetailRow label="Security" value="Email and password authentication enabled" isLast />
+      </View>
+
+      <View
+        className="mt-4 rounded-[28px] border border-tabby-line bg-tabby-paper p-5"
+        style={cardShadow}
+      >
+        <Text className="text-xl font-semibold text-tabby-ink">Design notes</Text>
+        <Text className="mt-2 text-sm leading-6 text-tabby-muted">
+          The product uses clear surfaces, restrained accents, and high-contrast labels to keep
+          financial information legible on mobile.
+        </Text>
+
+        <View className="mt-5 gap-3">
+          <InfoPill icon="shield-checkmark-outline" label="Trust-first visual hierarchy" />
+          <InfoPill icon="phone-portrait-outline" label="Comfortable thumb-sized touch targets" />
+          <InfoPill icon="sparkles-outline" label="Reusable card and badge patterns" />
+        </View>
+      </View>
+
+      <Pressable
+        className="mt-4 flex-row items-center justify-center rounded-[24px] border border-tabby-danger/30 bg-tabby-danger-soft px-4 py-4"
+        onPress={handleLogout}
+      >
+        <Ionicons name="log-out-outline" size={18} color={tabbyColors.danger} />
+        <Text className="ml-2 text-base font-semibold text-tabby-danger">Sign Out</Text>
+      </Pressable>
+    </ScrollView>
+  );
+}
+
+function DetailRow({
+  label,
+  value,
+  isLast = false,
+}: {
+  label: string;
+  value: string;
+  isLast?: boolean;
+}) {
+  return (
+    <View className={`mt-5 ${isLast ? "" : "border-b border-tabby-line pb-5"}`}>
+      <Text className="text-xs font-semibold uppercase tracking-[1.6px] text-tabby-muted">
+        {label}
+      </Text>
+      <Text className="mt-2 text-base leading-7 text-tabby-ink">{value}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    padding: 20,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarContainer: {
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 24,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#1a73e8",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: {
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1a1a1a",
-    marginBottom: 16,
-  },
-  field: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  label: {
-    fontSize: 12,
-    color: "#888",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  value: {
-    fontSize: 16,
-    color: "#1a1a1a",
-  },
-  logoutButton: {
-    marginTop: 24,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#e53e3e",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-  },
-  logoutText: {
-    color: "#e53e3e",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+function InfoPill({ icon, label }: { icon: keyof typeof Ionicons.glyphMap; label: string }) {
+  return (
+    <View className="flex-row items-center rounded-[22px] bg-tabby-cloud px-4 py-4">
+      <View className="h-10 w-10 items-center justify-center rounded-full bg-tabby-paper">
+        <Ionicons name={icon} size={18} color={tabbyColors.accent} />
+      </View>
+      <Text className="ml-3 flex-1 text-sm leading-6 text-tabby-ink">{label}</Text>
+    </View>
+  );
+}

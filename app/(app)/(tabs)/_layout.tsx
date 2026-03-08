@@ -1,25 +1,33 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { tabbyColors } from "@/lib/ui";
 
-const TAB_TINT = "#1a73e8";
-const TAB_MUTED = "#64748b";
+const TAB_TINT = tabbyColors.accent;
+const TAB_MUTED = tabbyColors.muted;
 
 export default function AppTabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerStyle: { backgroundColor: "#1a73e8" },
-        headerTintColor: "#fff",
-        headerTitleStyle: { fontWeight: "bold" },
+        headerShown: false,
         tabBarActiveTintColor: TAB_TINT,
         tabBarInactiveTintColor: TAB_MUTED,
         tabBarStyle: {
-          height: 64,
-          paddingTop: 8,
-          paddingBottom: 8,
-          borderTopWidth: 1,
-          borderTopColor: "#dbe3ef",
-          backgroundColor: "#ffffff",
+          position: "absolute",
+          left: 16,
+          right: 16,
+          bottom: 16,
+          height: 72,
+          paddingTop: 10,
+          paddingBottom: 12,
+          borderTopWidth: 0,
+          backgroundColor: tabbyColors.paper,
+          borderRadius: 28,
+          shadowColor: tabbyColors.ink,
+          shadowOpacity: 0.12,
+          shadowRadius: 20,
+          shadowOffset: { width: 0, height: 12 },
+          elevation: 12,
         },
         tabBarLabelStyle: {
           fontSize: 12,
