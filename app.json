@@ -28,6 +28,11 @@
       "favicon": "./assets/favicon.png",
       "output": "server"
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-web-browser"]
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-web-browser",
+      "react-native-reanimated"
+    ]
   }
 }
