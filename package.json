@@ -11,12 +11,16 @@
     "lint:fix": "biome check --fix .",
     "format": "biome format .",
     "format:fix": "biome format --fix .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@better-auth/expo": "^1.5.4",
     "better-auth": "^1.5.4",
     "better-sqlite3": "^12.6.2",
+    "drizzle-orm": "^0.45.1",
     "expo": "~55.0.5",
     "expo-constants": "~55.0.7",
     "expo-linking": "~55.0.7",
@@ -36,6 +40,7 @@
     "@biomejs/biome": "^2.4.6",
     "@types/better-sqlite3": "^7.6.13",
     "@types/react": "~19.2.2",
+    "drizzle-kit": "^0.31.9",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2",
     "tailwindcss": "^3",
