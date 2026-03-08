@@ -37,7 +37,7 @@ export default function LoginScreen() {
         return;
       }
 
-      router.replace("/(app)/profile");
+      router.replace("/(app)");
     } catch {
       Alert.alert("Error", "Something went wrong. Please try again.");
     } finally {

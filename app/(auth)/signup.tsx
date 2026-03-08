@@ -50,7 +50,7 @@ export default function SignUpScreen() {
         return;
       }
 
-      router.replace("/(app)/profile");
+      router.replace("/(app)");
     } catch {
       Alert.alert("Error", "Something went wrong. Please try again.");
     } finally {
