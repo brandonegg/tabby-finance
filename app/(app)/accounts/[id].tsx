@@ -242,7 +242,11 @@ function FilterChip({
 }) {
   return (
     <Pressable
-      className={`rounded-full px-4 py-3 ${active ? "bg-tabby-accent" : "bg-tabby-paper"}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+      className={`min-h-11 flex-row items-center justify-center rounded-full px-4 py-2 ${
+        active ? "bg-tabby-accent" : "bg-tabby-paper"
+      }`}
       style={active ? undefined : cardShadow}
       onPress={onPress}
     >
