@@ -42,6 +42,7 @@
     "typescript": "~5.9.2"
   },
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json}": "biome check --fix --no-errors-on-unmatched"
   }
