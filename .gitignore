@@ -31,7 +31,11 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+
+# better-auth SQLite database
+*.db
 
 # typescript
 *.tsbuildinfo
