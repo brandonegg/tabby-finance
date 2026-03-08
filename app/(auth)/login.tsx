@@ -1,37 +1,78 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { AuthShell } from "@/components/ui/auth-shell";
 import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
+
+interface LoginErrors {
+  email?: string;
+  password?: string;
+  form?: string;
+}
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<LoginErrors>({});
   const [loading, setLoading] = useState(false);
 
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors((current) => ({
+      ...current,
+      email: undefined,
+      form: undefined,
+    }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    setErrors((current) => ({
+      ...current,
+      password: undefined,
+      form: undefined,
+    }));
+  };
+
+  const validateLogin = () => {
+    const nextErrors: LoginErrors = {};
+
+    if (!email.trim()) {
+      nextErrors.email = "Enter the email tied to your account.";
+    }
+
+    if (!password) {
+      nextErrors.password = "Enter your password to continue.";
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  };
+
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill in all fields.");
+    if (!validateLogin()) {
       return;
     }
 
+    setErrors({});
     setLoading(true);
     try {
       const { error } = await authClient.signIn.email({
-        email,
+        email: email.trim(),
         password,
       });
 
       if (error) {
-        Alert.alert("Login Failed", error.message ?? "Invalid credentials.");
+        setErrors({ form: error.message ?? "Invalid credentials." });
         return;
       }
 
       router.replace("/(app)");
     } catch {
-      Alert.alert("Error", "Something went wrong. Please try again.");
+      setErrors({ form: "Something went wrong. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -53,23 +94,31 @@ export default function LoginScreen() {
           label="Email"
           placeholder="you@company.com"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          error={errors.email}
         />
 
         <FormField
           label="Password"
           placeholder="Enter your password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
           secureTextEntry
+          error={errors.password}
         />
       </View>
 
+      {errors.form ? (
+        <View className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+          <Text className="text-sm leading-6 text-tabby-danger">{errors.form}</Text>
+        </View>
+      ) : null}
+
       <Pressable
-        className={`mt-3 items-center rounded-2xl px-4 py-4 ${
+        className={`mt-4 items-center rounded-2xl px-4 py-4 ${
           loading ? "bg-tabby-accent/70" : "bg-tabby-accent"
         }`}
         onPress={handleLogin}
@@ -87,7 +136,7 @@ export default function LoginScreen() {
       </Text>
 
       <Link href="/(auth)/signup" asChild>
-        <Pressable className="mt-6 items-center">
+        <Pressable className="mt-6 min-h-11 items-center justify-center rounded-2xl border border-tabby-line bg-tabby-cloud px-4 py-3">
           <Text className="text-sm text-tabby-muted">
             Need an account? <Text className="font-semibold text-tabby-accent">Create one</Text>
           </Text>
