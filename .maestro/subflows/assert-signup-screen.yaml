@@ -1,3 +1,4 @@
+appId: host.exp.exponent
 ---
 - assertVisible:
     id: auth.signup.screen
@@ -9,7 +10,17 @@
     id: auth.signup.password-input
 - assertVisible:
     id: auth.signup.confirm-password-input
+- scrollUntilVisible:
+    element:
+      id: auth.signup.submit-button
+    direction: DOWN
+    visibilityPercentage: 50
 - assertVisible:
     id: auth.signup.submit-button
+- scrollUntilVisible:
+    element:
+      id: auth.signup.login-link
+    direction: DOWN
+    visibilityPercentage: 50
 - assertVisible:
     id: auth.signup.login-link

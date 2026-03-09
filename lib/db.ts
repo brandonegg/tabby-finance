@@ -22,12 +22,16 @@ const remote = async (
     case "run":
       statement.run(...params);
       return { rows: [] as Array<unknown> };
-    case "get":
-      return { rows: statement.get(...params) as unknown as Array<unknown> };
     case "values":
       statement.setReturnArrays(true);
       return { rows: statement.all(...params) as Array<unknown> };
+    case "get": {
+      statement.setReturnArrays(true);
+      const row = statement.get(...params) as Array<unknown> | undefined;
+      return { rows: row as unknown as Array<unknown> };
+    }
     default:
+      statement.setReturnArrays(true);
       return { rows: statement.all(...params) as Array<unknown> };
   }
 };

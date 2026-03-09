@@ -1,0 +1,33 @@
+appId: host.exp.exponent
+env:
+  API_BASE_URL: ${API_BASE_URL || "http://localhost:8081"}
+  AUTH_NAME: ${AUTH_NAME || "Auth Signup"}
+  AUTH_EMAIL: ${AUTH_EMAIL || "tabby+maestro-auth-signup-ebc6f8a450@example.com"}
+  AUTH_PASSWORD: ${AUTH_PASSWORD || "Tabby-ebc6f8a450ae!"}
+---
+- runFlow: subflows/ensure-project-open.yaml
+- runScript:
+    file: scripts/auth-fixture.js
+    env:
+      AUTH_FIXTURE_ACTION: reset
+- runFlow: subflows/sign-out-if-needed.yaml
+- runFlow: subflows/assert-login-screen.yaml
+- runFlow: subflows/open-signup.yaml
+- runFlow: subflows/fill-signup-form.yaml
+- scrollUntilVisible:
+    element:
+      id: auth.signup.submit-button
+    direction: DOWN
+    visibilityPercentage: 50
+- tapOn:
+    id: auth.signup.submit-button
+- runFlow: subflows/assert-authenticated-shell.yaml
+- runFlow: subflows/open-profile-tab.yaml
+- scrollUntilVisible:
+    element:
+      id: app.profile.sign-out-button
+    direction: DOWN
+    visibilityPercentage: 50
+- tapOn:
+    id: app.profile.sign-out-button
+- runFlow: subflows/assert-login-screen.yaml

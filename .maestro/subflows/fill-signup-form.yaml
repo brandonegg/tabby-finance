@@ -1,0 +1,21 @@
+appId: host.exp.exponent
+---
+- tapOn:
+    id: auth.signup.name-input
+- inputText: ${AUTH_NAME}
+- tapOn:
+    id: auth.signup.email-input
+- inputText: ${AUTH_EMAIL}
+- tapOn:
+    id: auth.signup.password-input
+- inputText: ${AUTH_PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth.signup.confirm-password-input
+    direction: DOWN
+    visibilityPercentage: 50
+- tapOn:
+    id: auth.signup.confirm-password-input
+- inputText: ${AUTH_PASSWORD}
+- hideKeyboard

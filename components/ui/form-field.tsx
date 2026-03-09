@@ -5,9 +5,10 @@ import { tabbyColors } from "@/lib/ui";
 interface FormFieldProps extends TextInputProps {
   label: string;
   error?: string;
+  errorTestID?: string;
 }
 
-export function FormField({ label, error, ...props }: FormFieldProps) {
+export function FormField({ label, error, errorTestID, ...props }: FormFieldProps) {
   return (
     <View className="mb-4">
       <Text
@@ -24,7 +25,11 @@ export function FormField({ label, error, ...props }: FormFieldProps) {
         placeholderTextColor={tabbyColors.muted}
         {...props}
       />
-      {error ? <Text className="mt-2 text-sm leading-6 text-tabby-danger">{error}</Text> : null}
+      {error ? (
+        <Text className="mt-2 text-sm leading-6 text-tabby-danger" testID={errorTestID}>
+          {error}
+        </Text>
+      ) : null}
     </View>
   );
 }
