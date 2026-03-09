@@ -9,6 +9,7 @@ import {
   horizontalScreenPadding,
   screenTopPadding,
 } from "@/lib/layout";
+import { testIds } from "@/lib/test-ids";
 import { cardShadow, formatCurrency, formatDate, formatRelativeDate, tabbyColors } from "@/lib/ui";
 
 interface AccountSummary {
@@ -85,7 +86,7 @@ export default function AccountsListScreen() {
   }
 
   return (
-    <View className="flex-1 bg-tabby-canvas">
+    <View className="flex-1 bg-tabby-canvas" testID={testIds.app.accounts.screen}>
       <FlatList
         data={accounts}
         keyExtractor={(item) => item.id}
@@ -174,7 +175,12 @@ export default function AccountsListScreen() {
 
             <View className="mt-5 flex-row items-center justify-between">
               <View>
-                <Text className="text-2xl font-semibold text-tabby-ink">Linked accounts</Text>
+                <Text
+                  className="text-2xl font-semibold text-tabby-ink"
+                  testID={testIds.app.accounts.heading}
+                >
+                  Linked accounts
+                </Text>
                 <Text className="mt-1 text-sm leading-6 text-tabby-muted">
                   Tap into any account to review recent activity.
                 </Text>

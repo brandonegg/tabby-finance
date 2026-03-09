@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { AuthShell } from "@/components/ui/auth-shell";
 import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
+import { testIds } from "@/lib/test-ids";
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function SignUpScreen() {
       eyebrow="New workspace"
       title="Build a steadier money routine."
       subtitle="Create your account to review balances, institutions, and activity in one consistent mobile flow."
+      testID={testIds.auth.signup.screen}
     >
       <Text className="text-2xl font-semibold text-tabby-ink">Create account</Text>
       <Text className="mt-2 text-sm leading-6 text-tabby-muted">
@@ -68,6 +70,7 @@ export default function SignUpScreen() {
           value={name}
           onChangeText={setName}
           autoCapitalize="words"
+          testID={testIds.auth.signup.nameInput}
         />
 
         <FormField
@@ -78,6 +81,7 @@ export default function SignUpScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          testID={testIds.auth.signup.emailInput}
         />
 
         <FormField
@@ -86,6 +90,7 @@ export default function SignUpScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          testID={testIds.auth.signup.passwordInput}
         />
 
         <FormField
@@ -94,6 +99,7 @@ export default function SignUpScreen() {
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
+          testID={testIds.auth.signup.confirmPasswordInput}
         />
       </View>
 
@@ -103,6 +109,7 @@ export default function SignUpScreen() {
         }`}
         onPress={handleSignUp}
         disabled={loading}
+        testID={testIds.auth.signup.submitButton}
       >
         {loading ? (
           <ActivityIndicator color="#fffaf2" />
@@ -116,7 +123,7 @@ export default function SignUpScreen() {
       </Text>
 
       <Link href="/(auth)/login" asChild>
-        <Pressable className="mt-6 items-center">
+        <Pressable className="mt-6 items-center" testID={testIds.auth.signup.loginLink}>
           <Text className="text-sm text-tabby-muted">
             Already have an account?{" "}
             <Text className="font-semibold text-tabby-accent">Sign in</Text>

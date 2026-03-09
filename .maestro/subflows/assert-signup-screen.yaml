@@ -1,0 +1,15 @@
+---
+- assertVisible:
+    id: auth.signup.screen
+- assertVisible:
+    id: auth.signup.name-input
+- assertVisible:
+    id: auth.signup.email-input
+- assertVisible:
+    id: auth.signup.password-input
+- assertVisible:
+    id: auth.signup.confirm-password-input
+- assertVisible:
+    id: auth.signup.submit-button
+- assertVisible:
+    id: auth.signup.login-link

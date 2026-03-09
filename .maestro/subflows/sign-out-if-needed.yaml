@@ -1,0 +1,15 @@
+---
+- runFlow:
+    when:
+      visible:
+        id: app.tabs.profile
+    file: open-profile-tab.yaml
+- runFlow:
+    when:
+      visible:
+        id: app.profile.sign-out-button
+    commands:
+      - tapOn:
+          id: app.profile.sign-out-button
+      - assertVisible:
+          id: auth.login.screen

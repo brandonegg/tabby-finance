@@ -8,6 +8,7 @@ import {
   horizontalScreenPadding,
   screenTopPadding,
 } from "@/lib/layout";
+import { testIds } from "@/lib/test-ids";
 import { cardShadow, formatDate, getInitials, tabbyColors } from "@/lib/ui";
 
 export default function ProfileScreen() {
@@ -43,6 +44,7 @@ export default function ProfileScreen() {
         paddingBottom: getFloatingTabBarContentPadding(insets.bottom),
       }}
       showsVerticalScrollIndicator={false}
+      testID={testIds.app.profile.screen}
     >
       <View className="overflow-hidden rounded-[32px] bg-tabby-ink px-6 py-7">
         <View className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-tabby-accent/30" />
@@ -103,6 +105,7 @@ export default function ProfileScreen() {
       <Pressable
         className="mt-4 flex-row items-center justify-center rounded-[24px] border border-tabby-danger/30 bg-tabby-danger-soft px-4 py-4"
         onPress={handleLogout}
+        testID={testIds.app.profile.signOutButton}
       >
         <Ionicons name="log-out-outline" size={18} color={tabbyColors.danger} />
         <Text className="ml-2 text-base font-semibold text-tabby-danger">Sign Out</Text>

@@ -1,0 +1,5 @@
+---
+- tapOn:
+    id: app.tabs.profile
+- assertVisible:
+    id: app.profile.screen

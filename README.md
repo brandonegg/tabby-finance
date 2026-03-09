@@ -60,6 +60,42 @@ pnpm android   # Android Emulator
 pnpm web       # Web browser
 ```
 
+## Maestro E2E Foundation
+
+Tabby includes an Android-first Maestro workspace in `.maestro/` for auth selector coverage and reusable auth helpers.
+
+### Maestro prerequisites
+
+- Install the Maestro CLI locally before running the flows
+- Start an Android emulator
+- Boot the Expo app with `pnpm android`
+
+### Run the foundation flow
+
+Once the app is open on the emulator, run:
+
+```bash
+pnpm maestro:auth:foundation
+```
+
+That flow checks the login screen, navigates to signup, verifies the signup selectors, and returns to login using stable `testID` selectors instead of text matching.
+
+### Generate deterministic auth users
+
+Use the helper script to generate stable local credentials from a seed:
+
+```bash
+pnpm maestro:user -- --seed auth-local
+```
+
+The same seed always returns the same name, email, and password. That makes it easy to reuse an existing local account for login flows or create a predictable signup target after clearing the local SQLite database.
+
+To reset the local auth state entirely, remove `tabby-finance.db`, `tabby-finance.db-shm`, and `tabby-finance.db-wal`, then run:
+
+```bash
+pnpm db:migrate
+```
+
 ## Project Structure
 
 ```
@@ -85,6 +121,9 @@ drizzle/            # Generated SQL migrations
 | `pnpm ios`           | Start on iOS Simulator                     |
 | `pnpm android`       | Start on Android Emulator                  |
 | `pnpm web`           | Start in web browser                       |
+| `pnpm maestro:auth:foundation` | Run the local Maestro auth foundation flow |
+| `pnpm maestro:auth:all` | Run every flow under `.maestro/`        |
+| `pnpm maestro:user -- --seed auth-local` | Generate deterministic local auth credentials |
 | `pnpm lint`          | Run Biome linter                           |
 | `pnpm lint:fix`      | Run Biome linter with auto-fix             |
 | `pnpm format`        | Check formatting with Biome                |

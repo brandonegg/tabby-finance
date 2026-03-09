@@ -9,9 +9,10 @@ interface AuthShellProps {
   title: string;
   subtitle: string;
   children: ReactNode;
+  testID?: string;
 }
 
-export function AuthShell({ eyebrow, title, subtitle, children }: AuthShellProps) {
+export function AuthShell({ eyebrow, title, subtitle, children, testID }: AuthShellProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -59,6 +60,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: AuthShellProps
           <View
             className="mt-6 rounded-[28px] border border-tabby-line bg-tabby-paper px-5 py-6"
             style={cardShadow}
+            testID={testID}
           >
             {children}
           </View>

@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { AuthShell } from "@/components/ui/auth-shell";
 import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
+import { testIds } from "@/lib/test-ids";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function LoginScreen() {
       eyebrow="Tabby Finance"
       title="See the whole picture."
       subtitle="Track every linked account in one calm mobile view, without losing trust or context."
+      testID={testIds.auth.login.screen}
     >
       <Text className="text-2xl font-semibold text-tabby-ink">Sign in</Text>
       <Text className="mt-2 text-sm leading-6 text-tabby-muted">
@@ -57,6 +59,7 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          testID={testIds.auth.login.emailInput}
         />
 
         <FormField
@@ -65,6 +68,7 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          testID={testIds.auth.login.passwordInput}
         />
       </View>
 
@@ -74,6 +78,7 @@ export default function LoginScreen() {
         }`}
         onPress={handleLogin}
         disabled={loading}
+        testID={testIds.auth.login.submitButton}
       >
         {loading ? (
           <ActivityIndicator color="#fffaf2" />
@@ -87,7 +92,7 @@ export default function LoginScreen() {
       </Text>
 
       <Link href="/(auth)/signup" asChild>
-        <Pressable className="mt-6 items-center">
+        <Pressable className="mt-6 items-center" testID={testIds.auth.login.signupLink}>
           <Text className="text-sm text-tabby-muted">
             Need an account? <Text className="font-semibold text-tabby-accent">Create one</Text>
           </Text>
