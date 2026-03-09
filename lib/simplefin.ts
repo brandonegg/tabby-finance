@@ -157,7 +157,7 @@ export async function fetchAccounts(
     );
   }
 
-  const payload = parseAccountSet(await response.json());
+  const payload = parseAccountSet(await parseJsonResponse(response));
 
   if (payload.errors.length > 0) {
     if (options?.onWarnings) {
@@ -215,8 +215,16 @@ function decodeClaimUrl(setupToken: string): URL {
   }
 
   try {
-    return new URL(decoded);
+    return validateHttpsUrl(
+      new URL(decoded),
+      "invalid_setup_token",
+      "SimpleFIN setup token must decode to an HTTPS claim URL.",
+    );
   } catch (error) {
+    if (error instanceof SimpleFinError) {
+      throw error;
+    }
+
     throw new SimpleFinError(
       "invalid_setup_token",
       "SimpleFIN setup token did not decode to a valid claim URL.",
@@ -234,6 +242,8 @@ function validateAccessUrl(accessUrl: string): URL {
       cause: error,
     });
   }
+
+  validateHttpsUrl(parsed, "invalid_access_url", "SimpleFIN access URL must use HTTPS.");
 
   if (!parsed.username || !parsed.password) {
     throw new SimpleFinError(
@@ -254,6 +264,18 @@ function normalizeBase64(value: string): string {
   const normalized = trimmed.replaceAll("-", "+").replaceAll("_", "/");
   const paddingLength = (4 - (normalized.length % 4)) % 4;
   return normalized.padEnd(normalized.length + paddingLength, "=");
+}
+
+function validateHttpsUrl<TCode extends SimpleFinError["code"]>(
+  url: URL,
+  code: TCode,
+  message: string,
+): URL {
+  if (url.protocol !== "https:") {
+    throw new SimpleFinError(code, message);
+  }
+
+  return url;
 }
 
 async function request(
@@ -278,6 +300,18 @@ async function buildHttpError(
   const responseText = (await response.text()).trim();
   const suffix = responseText ? ` Response body: ${responseText}` : "";
   return new SimpleFinError(code, `${message}${suffix}`, { status: response.status });
+}
+
+async function parseJsonResponse(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new SimpleFinError(
+      "invalid_response",
+      "SimpleFIN accounts response did not contain valid JSON.",
+      { cause: error, status: response.status },
+    );
+  }
 }
 
 function parseAccountSet(value: unknown): AccountSet {
