@@ -1,7 +1,6 @@
 appId: host.exp.exponent
 ---
 - runFlow: subflows/ensure-project-open.yaml
-- runFlow: subflows/sign-out-if-needed.yaml
 - runFlow: subflows/assert-login-screen.yaml
 - runFlow: subflows/open-signup.yaml
 - runFlow: subflows/open-login.yaml

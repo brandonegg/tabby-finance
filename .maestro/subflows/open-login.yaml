@@ -4,7 +4,6 @@ appId: host.exp.exponent
     element:
       id: auth.signup.login-link
     direction: DOWN
-    centerElement: true
     visibilityPercentage: 50
 - tapOn:
     id: auth.signup.login-link
