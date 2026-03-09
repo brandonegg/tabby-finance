@@ -1,3 +1,4 @@
+appId: host.exp.exponent
 env:
   API_BASE_URL: ${API_BASE_URL || "http://localhost:8081"}
   AUTH_NAME: ${AUTH_NAME || "Auth Login"}
