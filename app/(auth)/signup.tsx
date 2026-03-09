@@ -1,10 +1,18 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { AuthShell } from "@/components/ui/auth-shell";
 import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
 import { testIds } from "@/lib/test-ids";
+
+interface SignUpErrors {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  form?: string;
+}
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -12,40 +20,74 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<SignUpErrors>({});
   const [loading, setLoading] = useState(false);
 
+  const clearErrors = (fields: Array<keyof SignUpErrors>) => {
+    setErrors((current) => {
+      const nextErrors = {
+        ...current,
+        form: undefined,
+      };
+
+      for (const field of fields) {
+        nextErrors[field] = undefined;
+      }
+
+      return nextErrors;
+    });
+  };
+
+  const validateSignUp = () => {
+    const nextErrors: SignUpErrors = {};
+
+    if (!name.trim()) {
+      nextErrors.name = "Enter the name you want on your account.";
+    }
+
+    if (!email.trim()) {
+      nextErrors.email = "Enter an email so you can sign back in.";
+    }
+
+    if (!password) {
+      nextErrors.password = "Choose a password with at least 8 characters.";
+    } else if (password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters.";
+    }
+
+    if (!confirmPassword) {
+      nextErrors.confirmPassword = "Repeat your password to confirm it.";
+    } else if (password !== confirmPassword) {
+      nextErrors.confirmPassword = "Passwords do not match yet.";
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  };
+
   const handleSignUp = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields.");
+    if (!validateSignUp()) {
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
-      return;
-    }
-
-    if (password.length < 8) {
-      Alert.alert("Error", "Password must be at least 8 characters.");
-      return;
-    }
-
+    setErrors({});
     setLoading(true);
     try {
       const { error } = await authClient.signUp.email({
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim(),
         password,
       });
 
       if (error) {
-        Alert.alert("Sign Up Failed", error.message ?? "Could not create account.");
+        setErrors({ form: error.message ?? "Could not create account." });
         return;
       }
 
       router.replace("/(app)");
     } catch {
-      Alert.alert("Error", "Something went wrong. Please try again.");
+      setErrors({ form: "Something went wrong. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -68,43 +110,65 @@ export default function SignUpScreen() {
           label="Full name"
           placeholder="Alex Morgan"
           value={name}
-          onChangeText={setName}
+          onChangeText={(value) => {
+            setName(value);
+            clearErrors(["name"]);
+          }}
           autoCapitalize="words"
           testID={testIds.auth.signup.nameInput}
+          error={errors.name}
         />
 
         <FormField
           label="Email"
           placeholder="you@company.com"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(value) => {
+            setEmail(value);
+            clearErrors(["email"]);
+          }}
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
           testID={testIds.auth.signup.emailInput}
+          error={errors.email}
         />
 
         <FormField
           label="Password"
           placeholder="At least 8 characters"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(value) => {
+            setPassword(value);
+            clearErrors(["password", "confirmPassword"]);
+          }}
           secureTextEntry
           testID={testIds.auth.signup.passwordInput}
+          error={errors.password}
         />
 
         <FormField
           label="Confirm password"
           placeholder="Repeat your password"
           value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          onChangeText={(value) => {
+            setConfirmPassword(value);
+            clearErrors(["confirmPassword"]);
+          }}
           secureTextEntry
           testID={testIds.auth.signup.confirmPasswordInput}
+          error={errors.confirmPassword}
         />
       </View>
 
+      {errors.form ? (
+        <View className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+          <Text className="text-sm leading-6 text-tabby-danger">{errors.form}</Text>
+        </View>
+      ) : null}
+
       <Pressable
-        className={`mt-3 items-center rounded-2xl px-4 py-4 ${
+        className={`mt-4 items-center rounded-2xl px-4 py-4 ${
           loading ? "bg-tabby-accent/70" : "bg-tabby-accent"
         }`}
         onPress={handleSignUp}
@@ -123,7 +187,10 @@ export default function SignUpScreen() {
       </Text>
 
       <Link href="/(auth)/login" asChild>
-        <Pressable className="mt-6 items-center" testID={testIds.auth.signup.loginLink}>
+        <Pressable
+          className="mt-6 min-h-11 items-center justify-center rounded-2xl border border-tabby-line bg-tabby-cloud px-4 py-3"
+          testID={testIds.auth.signup.loginLink}
+        >
           <Text className="text-sm text-tabby-muted">
             Already have an account?{" "}
             <Text className="font-semibold text-tabby-accent">Sign in</Text>
