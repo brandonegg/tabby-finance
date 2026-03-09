@@ -24,7 +24,9 @@ This guide documents the mobile UI direction used in the current Expo mockup.
 | `tabby.accent-soft` | `#dce8df` | Soft accent badges |
 | `tabby.positive` | `#2e7d57` | Positive balances and inflows |
 | `tabby.warning` | `#8f6a2a` | Pending states |
+| `tabby.warning-strong` | `#876221` | Warning text and icons on `tabby.warning-soft` |
 | `tabby.danger` | `#b65245` | Errors and outflows |
+| `tabby.danger-strong` | `#a5483c` | Error text and icons on `tabby.danger-soft` |
 
 ## Typography
 
@@ -58,9 +60,9 @@ This guide documents the mobile UI direction used in the current Expo mockup.
 ### Status badge
 
 - Synced: `tabby.accent-soft`
-- Pending: `tabby.warning-soft`
+- Pending: `tabby.warning-soft` with `tabby.warning-strong` foreground
 - Positive: `tabby.positive-soft`
-- Negative or error: `tabby.danger-soft`
+- Negative or error: `tabby.danger-soft` with `tabby.danger-strong` foreground
 
 ### Forms
 
@@ -84,6 +86,6 @@ This guide documents the mobile UI direction used in the current Expo mockup.
 
 ## Review Notes
 
-- Warning and danger text should use darker foreground tokens when rendered on soft semantic backgrounds.
+- Warning and danger text should use the stronger semantic foreground tokens when rendered on soft semantic backgrounds.
 - Floating navigation and scroll containers should derive bottom spacing from safe-area insets instead of hard-coded values.
 - Secondary auth navigation should be styled as a tappable control, not only as linked text.

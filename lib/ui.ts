@@ -12,8 +12,10 @@ export const tabbyColors = {
   positive: "#2e7d57",
   positiveSoft: "#e4f1e8",
   warning: "#8f6a2a",
+  warningStrong: "#876221",
   warningSoft: "#f6ebcf",
   danger: "#b65245",
+  dangerStrong: "#a5483c",
   dangerSoft: "#f7e4df",
   white: "#ffffff",
 } as const;

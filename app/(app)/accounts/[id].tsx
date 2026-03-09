@@ -113,7 +113,7 @@ export default function AccountTransactionsScreen() {
   if (error && account == null) {
     return (
       <View className="flex-1 items-center justify-center bg-tabby-canvas px-6">
-        <Text className="text-center text-base leading-7 text-tabby-danger">{error}</Text>
+        <Text className="text-center text-base leading-7 text-tabby-danger-strong">{error}</Text>
       </View>
     );
   }
@@ -192,7 +192,7 @@ export default function AccountTransactionsScreen() {
 
             {error ? (
               <View className="mt-4 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
-                <Text className="text-sm leading-6 text-tabby-danger">{error}</Text>
+                <Text className="text-sm leading-6 text-tabby-danger-strong">{error}</Text>
               </View>
             ) : null}
           </View>
@@ -273,10 +273,10 @@ function TransactionRow({ txn, currency }: { txn: Transaction; currency: string 
       : "bg-tabby-danger-soft";
 
   const iconColor = isPending
-    ? tabbyColors.warning
+    ? tabbyColors.warningStrong
     : isPositive
       ? tabbyColors.positive
-      : tabbyColors.danger;
+      : tabbyColors.dangerStrong;
 
   const iconName: keyof typeof Ionicons.glyphMap = isPending
     ? "time-outline"
@@ -299,7 +299,7 @@ function TransactionRow({ txn, currency }: { txn: Transaction; currency: string 
           <Text className="text-sm text-tabby-muted">{formatDate(displayDate)}</Text>
           {isPending ? (
             <View className="rounded-full bg-tabby-warning-soft px-2 py-1">
-              <Text className="text-xs font-semibold uppercase tracking-[1.2px] text-tabby-warning">
+              <Text className="text-xs font-semibold uppercase tracking-[1.2px] text-tabby-warning-strong">
                 Pending
               </Text>
             </View>
@@ -314,7 +314,7 @@ function TransactionRow({ txn, currency }: { txn: Transaction; currency: string 
       <Text
         className={`ml-4 text-base font-semibold ${
           isPending
-            ? "text-tabby-warning"
+            ? "text-tabby-warning-strong"
             : isPositive
               ? "text-tabby-positive"
               : "text-tabby-danger"

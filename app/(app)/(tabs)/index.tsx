@@ -194,7 +194,7 @@ export default function AccountsListScreen() {
 
             {error ? (
               <View className="mt-5 rounded-[24px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
-                <Text className="text-sm leading-6 text-tabby-danger">{error}</Text>
+                <Text className="text-sm leading-6 text-tabby-danger-strong">{error}</Text>
               </View>
             ) : null}
           </View>

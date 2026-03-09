@@ -163,7 +163,7 @@ export default function SignUpScreen() {
 
       {errors.form ? (
         <View className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
-          <Text className="text-sm leading-6 text-tabby-danger">{errors.form}</Text>
+          <Text className="text-sm leading-6 text-tabby-danger-strong">{errors.form}</Text>
         </View>
       ) : null}
 
