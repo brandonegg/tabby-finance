@@ -36,6 +36,8 @@ yarn-error.*
 
 # better-auth SQLite database
 *.db
+*.db-shm
+*.db-wal
 
 # typescript
 *.tsbuildinfo

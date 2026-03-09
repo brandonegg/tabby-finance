@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { floatingTabBarHeight, getFloatingTabBarBottom } from "@/lib/layout";
+import { testIds } from "@/lib/test-ids";
 import { tabbyColors } from "@/lib/ui";
 
 const TAB_TINT = tabbyColors.accent;
@@ -44,6 +45,7 @@ export default function AppTabsLayout() {
         name="index"
         options={{
           title: "Accounts",
+          tabBarButtonTestID: testIds.app.tabs.accounts,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? "wallet" : "wallet-outline"} size={size} color={color} />
           ),
@@ -53,6 +55,7 @@ export default function AppTabsLayout() {
         name="profile"
         options={{
           title: "Profile",
+          tabBarButtonTestID: testIds.app.tabs.profile,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color} />
           ),

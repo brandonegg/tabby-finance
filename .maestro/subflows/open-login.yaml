@@ -1,0 +1,4 @@
+---
+- tapOn:
+    id: auth.signup.login-link
+- runFlow: assert-login-screen.yaml

@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { AuthShell } from "@/components/ui/auth-shell";
 import { FormField } from "@/components/ui/form-field";
 import { authClient } from "@/lib/auth-client";
+import { testIds } from "@/lib/test-ids";
 
 interface SignUpErrors {
   name?: string;
@@ -97,6 +98,7 @@ export default function SignUpScreen() {
       eyebrow="New workspace"
       title="Build a steadier money routine."
       subtitle="Create your account to review balances, institutions, and activity in one consistent mobile flow."
+      testID={testIds.auth.signup.screen}
     >
       <Text className="text-2xl font-semibold text-tabby-ink">Create account</Text>
       <Text className="mt-2 text-sm leading-6 text-tabby-muted">
@@ -113,6 +115,7 @@ export default function SignUpScreen() {
             clearErrors(["name"]);
           }}
           autoCapitalize="words"
+          testID={testIds.auth.signup.nameInput}
           error={errors.name}
         />
 
@@ -127,6 +130,7 @@ export default function SignUpScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          testID={testIds.auth.signup.emailInput}
           error={errors.email}
         />
 
@@ -139,6 +143,7 @@ export default function SignUpScreen() {
             clearErrors(["password", "confirmPassword"]);
           }}
           secureTextEntry
+          testID={testIds.auth.signup.passwordInput}
           error={errors.password}
         />
 
@@ -151,6 +156,7 @@ export default function SignUpScreen() {
             clearErrors(["confirmPassword"]);
           }}
           secureTextEntry
+          testID={testIds.auth.signup.confirmPasswordInput}
           error={errors.confirmPassword}
         />
       </View>
@@ -167,6 +173,7 @@ export default function SignUpScreen() {
         }`}
         onPress={handleSignUp}
         disabled={loading}
+        testID={testIds.auth.signup.submitButton}
       >
         {loading ? (
           <ActivityIndicator color="#fffaf2" />
@@ -180,7 +187,10 @@ export default function SignUpScreen() {
       </Text>
 
       <Link href="/(auth)/login" asChild>
-        <Pressable className="mt-6 min-h-11 items-center justify-center rounded-2xl border border-tabby-line bg-tabby-cloud px-4 py-3">
+        <Pressable
+          className="mt-6 min-h-11 items-center justify-center rounded-2xl border border-tabby-line bg-tabby-cloud px-4 py-3"
+          testID={testIds.auth.signup.loginLink}
+        >
           <Text className="text-sm text-tabby-muted">
             Already have an account?{" "}
             <Text className="font-semibold text-tabby-accent">Sign in</Text>

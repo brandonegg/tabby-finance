@@ -1,0 +1,11 @@
+---
+- assertVisible:
+    id: auth.login.screen
+- assertVisible:
+    id: auth.login.email-input
+- assertVisible:
+    id: auth.login.password-input
+- assertVisible:
+    id: auth.login.submit-button
+- assertVisible:
+    id: auth.login.signup-link
