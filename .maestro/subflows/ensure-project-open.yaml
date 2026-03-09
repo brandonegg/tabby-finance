@@ -1,12 +1,11 @@
 appId: host.exp.exponent
 env:
-  EXPO_URL: ${EXPO_URL || "exp://10.0.2.2:8081"}
+  LOGIN_EXPO_URL: ${LOGIN_EXPO_URL || "exp://127.0.0.1:8081/--/login"}
 ---
-- pressKey: back
-- pressKey: home
-- openLink: ${EXPO_URL}
+- openLink: ${LOGIN_EXPO_URL}
 - runFlow:
     when:
       visible: tabby-finance
     commands:
       - tapOn: tabby-finance
+- runFlow: assert-login-screen.yaml

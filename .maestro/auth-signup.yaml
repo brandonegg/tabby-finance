@@ -10,7 +10,6 @@ env:
     file: scripts/auth-fixture.js
     env:
       AUTH_FIXTURE_ACTION: reset
-- runFlow: subflows/sign-out-if-needed.yaml
 - runFlow: subflows/assert-login-screen.yaml
 - runFlow: subflows/open-signup.yaml
 - runFlow: subflows/fill-signup-form.yaml

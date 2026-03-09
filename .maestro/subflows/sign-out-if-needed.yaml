@@ -1,6 +1,6 @@
 appId: host.exp.exponent
 env:
-  LOGIN_EXPO_URL: ${LOGIN_EXPO_URL || "exp://10.0.2.2:8081/--/login"}
+  LOGIN_EXPO_URL: ${LOGIN_EXPO_URL || "exp://127.0.0.1:8081/--/login"}
 ---
 - runFlow:
     when:
