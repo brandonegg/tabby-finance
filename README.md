@@ -91,6 +91,13 @@ pnpm maestro:auth:login
 
 The signup flow resets a seeded test user, creates the account through the UI, verifies the authenticated shell, and signs out. The login flow ensures a seeded returning user exists, checks inline validation on the login form, and signs in through the UI. Both flows use the local development fixture API at `/api/test/maestro-auth-user`, which defaults to `http://localhost:8081` and can be overridden with `API_BASE_URL` if your Expo API server is exposed elsewhere.
 
+If Expo Go does not already have the project open, the shared Maestro recovery subflow will reopen it through Expo Go with `EXPO_URL`. On the Android emulator it defaults to `exp://10.0.2.2:8081`. Override it if you are using a different Metro port or a physical device, for example:
+
+```bash
+EXPO_URL=exp://192.168.1.25:8081 pnpm maestro:auth:signup
+EXPO_URL=exp://192.168.1.25:8081 pnpm maestro:auth:login
+```
+
 ### Generate deterministic auth users
 
 Use the helper script to generate stable local credentials from a seed:

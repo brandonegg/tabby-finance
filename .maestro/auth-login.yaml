@@ -5,12 +5,15 @@ env:
   AUTH_EMAIL: ${AUTH_EMAIL || "tabby+maestro-auth-login-7b9625603f@example.com"}
   AUTH_PASSWORD: ${AUTH_PASSWORD || "Tabby-7b9625603fbe!"}
 ---
+- runFlow: subflows/ensure-project-open.yaml
 - runScript:
     file: scripts/auth-fixture.js
     env:
       AUTH_FIXTURE_ACTION: ensure
 - runFlow: subflows/sign-out-if-needed.yaml
 - runFlow: subflows/assert-login-screen.yaml
+- runFlow: subflows/open-signup.yaml
+- runFlow: subflows/open-login.yaml
 - tapOn:
     id: auth.login.submit-button
 - assertVisible:

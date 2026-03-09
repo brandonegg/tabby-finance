@@ -1,4 +1,6 @@
 appId: host.exp.exponent
+env:
+  LOGIN_EXPO_URL: ${LOGIN_EXPO_URL || "exp://10.0.2.2:8081/--/login"}
 ---
 - runFlow:
     when:
@@ -8,9 +10,21 @@ appId: host.exp.exponent
 - runFlow:
     when:
       visible:
-        id: app.profile.sign-out-button
+        id: app.profile.screen
     commands:
+      - scrollUntilVisible:
+          element:
+            id: app.profile.sign-out-button
+          direction: DOWN
+          visibilityPercentage: 50
       - tapOn:
           id: app.profile.sign-out-button
       - assertVisible:
           id: auth.login.screen
+- runFlow:
+    when:
+      visible:
+        id: auth.signup.screen
+    commands:
+      - openLink: ${LOGIN_EXPO_URL}
+      - runFlow: assert-login-screen.yaml

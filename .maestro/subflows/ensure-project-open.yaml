@@ -1,0 +1,12 @@
+appId: host.exp.exponent
+env:
+  EXPO_URL: ${EXPO_URL || "exp://10.0.2.2:8081"}
+---
+- pressKey: back
+- pressKey: home
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: tabby-finance
+    commands:
+      - tapOn: tabby-finance

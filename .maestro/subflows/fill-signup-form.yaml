@@ -9,6 +9,13 @@ appId: host.exp.exponent
 - tapOn:
     id: auth.signup.password-input
 - inputText: ${AUTH_PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth.signup.confirm-password-input
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.signup.confirm-password-input
 - inputText: ${AUTH_PASSWORD}
+- hideKeyboard

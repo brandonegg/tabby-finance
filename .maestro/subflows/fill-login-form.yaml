@@ -2,7 +2,13 @@ appId: host.exp.exponent
 ---
 - tapOn:
     id: auth.login.email-input
-- inputText: ${AUTH_EMAIL}
+- eraseText: 100
+- setClipboard: ${AUTH_EMAIL}
+- pasteText
+- hideKeyboard
 - tapOn:
     id: auth.login.password-input
-- inputText: ${AUTH_PASSWORD}
+- eraseText: 100
+- setClipboard: ${AUTH_PASSWORD}
+- pasteText
+- hideKeyboard

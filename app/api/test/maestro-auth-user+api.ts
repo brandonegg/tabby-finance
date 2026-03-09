@@ -51,11 +51,7 @@ export async function POST(request: Request) {
   });
 
   if (action === "reset") {
-    if (existingUser) {
-      await db.delete(user).where(eq(user.id, existingUser.id));
-    }
-
-    await db.delete(verification).where(eq(verification.identifier, email));
+    await deleteFixtureUser(email, existingUser?.id ?? null);
 
     return Response.json({
       action,
@@ -64,15 +60,17 @@ export async function POST(request: Request) {
     });
   }
 
-  if (!existingUser) {
-    await auth.api.signUpEmail({
-      body: {
-        email,
-        name,
-        password,
-      },
-    });
-  }
+  // Rebuild the fixture user on every ensure so the requested credentials are
+  // always valid, even if a stale `user` row exists without its auth account.
+  await deleteFixtureUser(email, existingUser?.id ?? null);
+
+  await auth.api.signUpEmail({
+    body: {
+      email,
+      name,
+      password,
+    },
+  });
 
   return Response.json({
     action,
@@ -80,6 +78,14 @@ export async function POST(request: Request) {
     existed: Boolean(existingUser),
     ok: true,
   });
+}
+
+async function deleteFixtureUser(email: string, userId: string | null) {
+  if (userId) {
+    await db.delete(user).where(eq(user.id, userId));
+  }
+
+  await db.delete(verification).where(eq(verification.identifier, email));
 }
 
 function normalizeAction(value: unknown): FixtureAction | null {
