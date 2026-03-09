@@ -98,6 +98,35 @@ LOGIN_EXPO_URL=exp://192.168.1.25:8081/--/login pnpm maestro:auth:signup
 LOGIN_EXPO_URL=exp://192.168.1.25:8081/--/login pnpm maestro:auth:login
 ```
 
+### Run the CI-style Android auth suite locally
+
+If you want to exercise the same path GitHub Actions uses, install the Maestro CLI, boot an Android emulator, and run:
+
+```bash
+pnpm maestro:auth:ci
+```
+
+That command runs `pnpm db:migrate`, starts Expo Go on the emulator through Expo CLI, waits for Metro to come up on `127.0.0.1:8081`, and then executes the foundation, signup, and login flows sequentially. It writes JUnit XML, Maestro debug output, the Metro log, and Android logcat to `.maestro/results/`.
+
+### GitHub Actions auth coverage
+
+Pull requests to `main` and pushes to `main` now run a dedicated `Maestro Auth E2E` workflow in `.github/workflows/maestro-auth.yml`. The job:
+
+- reuses the existing pnpm cache pattern
+- boots an Android API 34 emulator on `ubuntu-22.04`
+- installs Maestro CLI
+- runs `pnpm maestro:auth:ci`
+- uploads `.maestro/results/` as a workflow artifact for failure triage
+
+The current workflow does not require any GitHub repository secrets. It sets local-only auth values inline for CI:
+
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `EXPO_PUBLIC_API_URL`
+- `LOGIN_EXPO_URL`
+
+If the Metro host, port, or Expo deep link changes, update those workflow env values to match.
+
 ### Generate deterministic auth users
 
 Use the helper script to generate stable local credentials from a seed:
@@ -142,6 +171,7 @@ drizzle/            # Generated SQL migrations
 | `pnpm maestro:auth:foundation` | Run the local Maestro auth foundation flow |
 | `pnpm maestro:auth:signup` | Run the local Maestro signup journey |
 | `pnpm maestro:auth:login` | Run the local Maestro returning-user login journey |
+| `pnpm maestro:auth:ci` | Run the CI-style Android Maestro auth suite locally |
 | `pnpm maestro:auth:all` | Run every flow under `.maestro/`        |
 | `pnpm maestro:user -- --seed auth-local` | Generate deterministic local auth credentials |
 | `pnpm lint`          | Run Biome linter                           |
