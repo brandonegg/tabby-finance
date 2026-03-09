@@ -53,7 +53,6 @@ jobs:
         with:
           api-level: 34
           arch: x86_64
-          profile: pixel_7_pro
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: pnpm maestro:auth:ci
