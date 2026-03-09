@@ -107,8 +107,8 @@ export default function ProfileScreen() {
         onPress={handleLogout}
         testID={testIds.app.profile.signOutButton}
       >
-        <Ionicons name="log-out-outline" size={18} color={tabbyColors.danger} />
-        <Text className="ml-2 text-base font-semibold text-tabby-danger">Sign Out</Text>
+        <Ionicons name="log-out-outline" size={18} color={tabbyColors.dangerStrong} />
+        <Text className="ml-2 text-base font-semibold text-tabby-danger-strong">Sign Out</Text>
       </Pressable>
     </ScrollView>
   );
