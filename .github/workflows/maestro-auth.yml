@@ -10,7 +10,7 @@ jobs:
   maestro-auth:
     name: Android Auth E2E
     runs-on: ubuntu-22.04
-    timeout-minutes: 35
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +34,15 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Cache AVD
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: maestro-avd-api-34-ubuntu-22.04-v1
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -41,6 +50,17 @@ jobs:
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Create AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2.35.0
+        with:
+          api-level: 34
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for Maestro auth CI cache."
 
       - name: Run Maestro auth suite
         uses: reactivecircus/android-emulator-runner@v2.35.0
@@ -53,7 +73,8 @@ jobs:
         with:
           api-level: 34
           arch: x86_64
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: pnpm maestro:auth:ci
 
