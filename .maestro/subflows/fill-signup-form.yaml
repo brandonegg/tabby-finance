@@ -1,0 +1,13 @@
+---
+- tapOn:
+    id: auth.signup.name-input
+- inputText: ${AUTH_NAME}
+- tapOn:
+    id: auth.signup.email-input
+- inputText: ${AUTH_EMAIL}
+- tapOn:
+    id: auth.signup.password-input
+- inputText: ${AUTH_PASSWORD}
+- tapOn:
+    id: auth.signup.confirm-password-input
+- inputText: ${AUTH_PASSWORD}

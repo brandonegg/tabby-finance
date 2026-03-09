@@ -102,6 +102,7 @@ export default function LoginScreen() {
           autoCorrect={false}
           testID={testIds.auth.login.emailInput}
           error={errors.email}
+          errorTestID={testIds.auth.login.emailError}
         />
 
         <FormField
@@ -112,11 +113,15 @@ export default function LoginScreen() {
           secureTextEntry
           testID={testIds.auth.login.passwordInput}
           error={errors.password}
+          errorTestID={testIds.auth.login.passwordError}
         />
       </View>
 
       {errors.form ? (
-        <View className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+        <View
+          className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4"
+          testID={testIds.auth.login.formError}
+        >
           <Text className="text-sm leading-6 text-tabby-danger-strong">{errors.form}</Text>
         </View>
       ) : null}

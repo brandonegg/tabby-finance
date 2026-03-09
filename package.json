@@ -8,6 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "maestro:auth:foundation": "maestro test .maestro/auth-foundation.yaml",
+    "maestro:auth:signup": "maestro test .maestro/auth-signup.yaml",
+    "maestro:auth:login": "maestro test .maestro/auth-login.yaml",
     "maestro:auth:all": "maestro test .maestro",
     "maestro:user": "node scripts/maestro-test-user.mjs",
     "lint": "biome check .",

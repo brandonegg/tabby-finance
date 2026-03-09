@@ -1,0 +1,7 @@
+---
+- assertVisible:
+    id: app.accounts.screen
+- assertVisible:
+    id: app.accounts.heading
+- assertVisible:
+    id: app.tabs.profile

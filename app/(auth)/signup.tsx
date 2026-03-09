@@ -117,6 +117,7 @@ export default function SignUpScreen() {
           autoCapitalize="words"
           testID={testIds.auth.signup.nameInput}
           error={errors.name}
+          errorTestID={testIds.auth.signup.nameError}
         />
 
         <FormField
@@ -132,6 +133,7 @@ export default function SignUpScreen() {
           autoCorrect={false}
           testID={testIds.auth.signup.emailInput}
           error={errors.email}
+          errorTestID={testIds.auth.signup.emailError}
         />
 
         <FormField
@@ -145,6 +147,7 @@ export default function SignUpScreen() {
           secureTextEntry
           testID={testIds.auth.signup.passwordInput}
           error={errors.password}
+          errorTestID={testIds.auth.signup.passwordError}
         />
 
         <FormField
@@ -158,11 +161,15 @@ export default function SignUpScreen() {
           secureTextEntry
           testID={testIds.auth.signup.confirmPasswordInput}
           error={errors.confirmPassword}
+          errorTestID={testIds.auth.signup.confirmPasswordError}
         />
       </View>
 
       {errors.form ? (
-        <View className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4">
+        <View
+          className="mt-3 rounded-[22px] border border-tabby-danger/20 bg-tabby-danger-soft px-4 py-4"
+          testID={testIds.auth.signup.formError}
+        >
           <Text className="text-sm leading-6 text-tabby-danger-strong">{errors.form}</Text>
         </View>
       ) : null}

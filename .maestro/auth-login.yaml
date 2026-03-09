@@ -1,0 +1,22 @@
+env:
+  API_BASE_URL: ${API_BASE_URL || "http://localhost:8081"}
+  AUTH_NAME: ${AUTH_NAME || "Auth Login"}
+  AUTH_EMAIL: ${AUTH_EMAIL || "tabby+maestro-auth-login-7b9625603f@example.com"}
+  AUTH_PASSWORD: ${AUTH_PASSWORD || "Tabby-7b9625603fbe!"}
+---
+- runScript:
+    file: scripts/auth-fixture.js
+    env:
+      AUTH_FIXTURE_ACTION: ensure
+- runFlow: subflows/sign-out-if-needed.yaml
+- runFlow: subflows/assert-login-screen.yaml
+- tapOn:
+    id: auth.login.submit-button
+- assertVisible:
+    id: auth.login.email-error
+- assertVisible:
+    id: auth.login.password-error
+- runFlow: subflows/fill-login-form.yaml
+- tapOn:
+    id: auth.login.submit-button
+- runFlow: subflows/assert-authenticated-shell.yaml

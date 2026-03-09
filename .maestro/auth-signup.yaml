@@ -1,0 +1,21 @@
+env:
+  API_BASE_URL: ${API_BASE_URL || "http://localhost:8081"}
+  AUTH_NAME: ${AUTH_NAME || "Auth Signup"}
+  AUTH_EMAIL: ${AUTH_EMAIL || "tabby+maestro-auth-signup-ebc6f8a450@example.com"}
+  AUTH_PASSWORD: ${AUTH_PASSWORD || "Tabby-ebc6f8a450ae!"}
+---
+- runScript:
+    file: scripts/auth-fixture.js
+    env:
+      AUTH_FIXTURE_ACTION: reset
+- runFlow: subflows/sign-out-if-needed.yaml
+- runFlow: subflows/assert-login-screen.yaml
+- runFlow: subflows/open-signup.yaml
+- runFlow: subflows/fill-signup-form.yaml
+- tapOn:
+    id: auth.signup.submit-button
+- runFlow: subflows/assert-authenticated-shell.yaml
+- runFlow: subflows/open-profile-tab.yaml
+- tapOn:
+    id: app.profile.sign-out-button
+- runFlow: subflows/assert-login-screen.yaml

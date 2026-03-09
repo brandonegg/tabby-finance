@@ -80,6 +80,17 @@ pnpm maestro:auth:foundation
 
 That flow checks the login screen, navigates to signup, verifies the signup selectors, and returns to login using stable `testID` selectors instead of text matching.
 
+### Run the auth journey flows
+
+After the app is open on Android, run the new end-to-end auth flows individually:
+
+```bash
+pnpm maestro:auth:signup
+pnpm maestro:auth:login
+```
+
+The signup flow resets a seeded test user, creates the account through the UI, verifies the authenticated shell, and signs out. The login flow ensures a seeded returning user exists, checks inline validation on the login form, and signs in through the UI. Both flows use the local development fixture API at `/api/test/maestro-auth-user`, which defaults to `http://localhost:8081` and can be overridden with `API_BASE_URL` if your Expo API server is exposed elsewhere.
+
 ### Generate deterministic auth users
 
 Use the helper script to generate stable local credentials from a seed:
@@ -122,6 +133,8 @@ drizzle/            # Generated SQL migrations
 | `pnpm android`       | Start on Android Emulator                  |
 | `pnpm web`           | Start in web browser                       |
 | `pnpm maestro:auth:foundation` | Run the local Maestro auth foundation flow |
+| `pnpm maestro:auth:signup` | Run the local Maestro signup journey |
+| `pnpm maestro:auth:login` | Run the local Maestro returning-user login journey |
 | `pnpm maestro:auth:all` | Run every flow under `.maestro/`        |
 | `pnpm maestro:user -- --seed auth-local` | Generate deterministic local auth credentials |
 | `pnpm lint`          | Run Biome linter                           |
