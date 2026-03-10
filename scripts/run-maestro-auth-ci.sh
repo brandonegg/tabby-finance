@@ -7,8 +7,10 @@ MAESTRO_WORKSPACE_DIR="$ROOT_DIR/.maestro"
 RESULTS_DIR_REL="${MAESTRO_RESULTS_DIR_REL:-results}"
 RESULTS_DIR_ABS="$MAESTRO_WORKSPACE_DIR/$RESULTS_DIR_REL"
 METRO_PORT="${METRO_PORT:-8081}"
-APP_URL="${LOGIN_EXPO_URL:-exp://127.0.0.1:${METRO_PORT}/--/login}"
-API_BASE_URL="${API_BASE_URL:-http://127.0.0.1:${METRO_PORT}}"
+METRO_HOST="${METRO_HOST:-127.0.0.1}"
+APP_URL="${LOGIN_EXPO_URL:-exp://${METRO_HOST}:${METRO_PORT}/--/login}"
+API_BASE_URL="${API_BASE_URL:-http://${METRO_HOST}:${METRO_PORT}}"
+METRO_STATUS_URL="${METRO_STATUS_URL:-http://${METRO_HOST}:${METRO_PORT}/status}"
 METRO_LOG="$RESULTS_DIR_ABS/metro.log"
 LOGCAT_LOG="$RESULTS_DIR_ABS/android-logcat.txt"
 
@@ -37,7 +39,7 @@ wait_for_metro() {
       return 1
     fi
 
-    if curl -fsS "http://127.0.0.1:${METRO_PORT}/status" | grep -q "packager-status:running"; then
+    if curl -fsS "$METRO_STATUS_URL" | grep -q "packager-status:running"; then
       return 0
     fi
 

@@ -66,10 +66,11 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2.35.0
         env:
           CI: true
+          METRO_HOST: localhost
           BETTER_AUTH_SECRET: tabby-finance-github-actions-maestro-secret
-          BETTER_AUTH_URL: http://127.0.0.1:8081
-          EXPO_PUBLIC_API_URL: http://127.0.0.1:8081
-          LOGIN_EXPO_URL: exp://127.0.0.1:8081/--/login
+          BETTER_AUTH_URL: http://localhost:8081
+          EXPO_PUBLIC_API_URL: http://localhost:8081
+          LOGIN_EXPO_URL: exp://localhost:8081/--/login
         with:
           api-level: 34
           arch: x86_64

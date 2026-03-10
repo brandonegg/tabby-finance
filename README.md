@@ -108,6 +108,8 @@ pnpm maestro:auth:ci
 
 That command runs `pnpm db:migrate`, starts Expo Go on the emulator through Expo CLI, waits for Metro to come up on `127.0.0.1:8081`, and then executes the foundation, signup, and login flows sequentially. It writes JUnit XML, Maestro debug output, the Metro log, and Android logcat to `.maestro/results/`.
 
+By default the script targets `127.0.0.1`, which matches the stable local Android emulator path. On Linux CI runners, Expo may advertise Metro on `localhost` instead. Override `METRO_HOST=localhost` if you need the readiness check, API URL, and Expo deep link to use `localhost` consistently.
+
 ### GitHub Actions auth coverage
 
 Pull requests to `main` and pushes to `main` now run a dedicated `Maestro Auth E2E` workflow in `.github/workflows/maestro-auth.yml`. The job:
@@ -120,6 +122,7 @@ Pull requests to `main` and pushes to `main` now run a dedicated `Maestro Auth E
 
 The current workflow does not require any GitHub repository secrets. It sets local-only auth values inline for CI:
 
+- `METRO_HOST`
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL`
 - `EXPO_PUBLIC_API_URL`
