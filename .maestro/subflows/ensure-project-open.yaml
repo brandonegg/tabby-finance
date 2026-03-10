@@ -9,13 +9,24 @@ env:
     commands:
       - tapOn: tabby-finance
 - extendedWaitUntil:
-    visible: This is the developer menu
-    timeout: 30000
+    visible:
+      text: .*This is the developer menu.*
+    timeout: 45000
     optional: true
     label: Wait for Expo Go onboarding if it appears
 - runFlow:
     when:
-      visible: This is the developer menu
+      visible:
+        text: .*This is the developer menu.*
+    commands:
+      - tapOn:
+          text: ^Continue$
+          retryTapIfNoChange: true
+          label: Continue past Expo Go onboarding
+- runFlow:
+    when:
+      visible:
+        text: .*This is the developer menu.*
     commands:
       - tapOn:
           point: 50%,89%
