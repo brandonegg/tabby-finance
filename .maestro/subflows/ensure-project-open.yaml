@@ -8,9 +8,8 @@ env:
       visible: tabby-finance
     commands:
       - tapOn: tabby-finance
-- runFlow:
-    when:
-      visible: Continue
-    commands:
-      - tapOn: Continue
+- tapOn:
+    text: Continue
+    optional: true
+    label: Dismiss Expo Go onboarding if it appears
 - runFlow: assert-login-screen.yaml
