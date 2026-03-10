@@ -1,11 +1,26 @@
 appId: host.exp.exponent
 ---
+- scrollUntilVisible:
+    element:
+      id: auth.signup.name-input
+    direction: UP
+    visibilityPercentage: 50
 - tapOn:
     id: auth.signup.name-input
 - inputText: ${AUTH_NAME}
+- scrollUntilVisible:
+    element:
+      id: auth.signup.email-input
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.signup.email-input
 - inputText: ${AUTH_EMAIL}
+- scrollUntilVisible:
+    element:
+      id: auth.signup.password-input
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.signup.password-input
 - inputText: ${AUTH_PASSWORD}
