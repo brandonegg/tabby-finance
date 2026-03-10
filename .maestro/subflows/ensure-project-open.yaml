@@ -8,4 +8,42 @@ env:
       visible: tabby-finance
     commands:
       - tapOn: tabby-finance
+- extendedWaitUntil:
+    visible:
+      text: .*This is the developer menu.*
+    timeout: 45000
+    optional: true
+    label: Wait for Expo Go onboarding if it appears
+- runFlow:
+    when:
+      visible:
+        text: .*This is the developer menu.*
+    commands:
+      - tapOn:
+          text: ^Continue$
+          retryTapIfNoChange: true
+          label: Continue past Expo Go onboarding
+- extendedWaitUntil:
+    visible:
+      text: ^Close$
+    timeout: 10000
+    optional: true
+    label: Wait for Expo Go developer menu close button
+- runFlow:
+    when:
+      visible:
+        text: ^Close$
+    commands:
+      - tapOn:
+          text: ^Close$
+          retryTapIfNoChange: true
+          label: Close Expo Go developer menu
+- runFlow:
+    when:
+      visible:
+        text: ^Go home$
+    commands:
+      - tapOn:
+          point: 86%,47%
+          label: Fallback close for Expo Go developer menu
 - runFlow: assert-login-screen.yaml

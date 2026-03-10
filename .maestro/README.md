@@ -51,3 +51,12 @@ Current seeded flow defaults:
 - `auth-login` -> `tabby+maestro-auth-login-7b9625603f@example.com`
 
 If you need a clean local auth slate, remove `tabby-finance.db`, `tabby-finance.db-shm`, and `tabby-finance.db-wal`, then run `pnpm db:migrate`.
+
+## CI workflow
+
+Use `pnpm maestro:auth:ci` when you want the GitHub Actions path locally:
+
+1. Boot an Android emulator and install the Maestro CLI.
+2. Run `pnpm maestro:auth:ci`.
+3. The script runs `pnpm db:migrate`, starts Expo Go on the emulator with `expo start --go --android --localhost`, waits for Metro to report healthy, then executes the foundation, signup, and login flows in sequence.
+4. Results are written to `.maestro/results/`, including JUnit XML, Maestro debug output, the Metro log, and Android logcat output.

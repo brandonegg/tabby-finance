@@ -1,0 +1,88 @@
+name: Maestro Auth E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  maestro-auth:
+    name: Android Auth E2E
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Cache AVD
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: maestro-avd-api-34-ubuntu-22.04-v1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Create AVD snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2.35.0
+        with:
+          api-level: 34
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for Maestro auth CI cache."
+
+      - name: Run Maestro auth suite
+        uses: reactivecircus/android-emulator-runner@v2.35.0
+        env:
+          CI: true
+          METRO_STATUS_URL: http://localhost:8081/status
+          BETTER_AUTH_SECRET: tabby-finance-github-actions-maestro-secret
+          BETTER_AUTH_URL: http://127.0.0.1:8081
+          EXPO_PUBLIC_API_URL: http://127.0.0.1:8081
+          LOGIN_EXPO_URL: exp://127.0.0.1:8081/--/login
+        with:
+          api-level: 34
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: pnpm maestro:auth:ci
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-auth-results
+          path: .maestro/results
+          if-no-files-found: warn

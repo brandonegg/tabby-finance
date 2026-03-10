@@ -7,6 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "maestro:auth:ci": "bash scripts/run-maestro-auth-ci.sh",
     "maestro:auth:foundation": "maestro test .maestro/auth-foundation.yaml",
     "maestro:auth:signup": "maestro test .maestro/auth-signup.yaml",
     "maestro:auth:login": "maestro test .maestro/auth-login.yaml",
