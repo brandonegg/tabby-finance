@@ -8,4 +8,9 @@ env:
       visible: tabby-finance
     commands:
       - tapOn: tabby-finance
+- runFlow:
+    when:
+      visible: Continue
+    commands:
+      - tapOn: Continue
 - runFlow: assert-login-screen.yaml
