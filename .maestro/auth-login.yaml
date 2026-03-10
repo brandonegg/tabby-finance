@@ -13,6 +13,11 @@ env:
 - runFlow: subflows/assert-login-screen.yaml
 - runFlow: subflows/open-signup.yaml
 - runFlow: subflows/open-login.yaml
+- scrollUntilVisible:
+    element:
+      id: auth.login.submit-button
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.login.submit-button
 - assertVisible:
@@ -20,6 +25,11 @@ env:
 - assertVisible:
     id: auth.login.password-error
 - runFlow: subflows/fill-login-form.yaml
+- scrollUntilVisible:
+    element:
+      id: auth.login.submit-button
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.login.submit-button
 - runFlow: subflows/assert-authenticated-shell.yaml

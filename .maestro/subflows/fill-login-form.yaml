@@ -1,11 +1,21 @@
 appId: host.exp.exponent
 ---
+- scrollUntilVisible:
+    element:
+      id: auth.login.email-input
+    direction: UP
+    visibilityPercentage: 50
 - tapOn:
     id: auth.login.email-input
 - eraseText: 100
 - setClipboard: ${AUTH_EMAIL}
 - pasteText
 - hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: auth.login.password-input
+    direction: DOWN
+    visibilityPercentage: 50
 - tapOn:
     id: auth.login.password-input
 - eraseText: 100

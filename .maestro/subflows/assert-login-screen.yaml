@@ -8,9 +8,24 @@ appId: host.exp.exponent
     id: auth.login.screen
 - assertVisible:
     id: auth.login.email-input
+- scrollUntilVisible:
+    element:
+      id: auth.login.password-input
+    direction: DOWN
+    visibilityPercentage: 50
 - assertVisible:
     id: auth.login.password-input
+- scrollUntilVisible:
+    element:
+      id: auth.login.submit-button
+    direction: DOWN
+    visibilityPercentage: 50
 - assertVisible:
     id: auth.login.submit-button
+- scrollUntilVisible:
+    element:
+      id: auth.login.signup-link
+    direction: DOWN
+    visibilityPercentage: 50
 - assertVisible:
     id: auth.login.signup-link
