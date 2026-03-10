@@ -1,5 +1,9 @@
 appId: host.exp.exponent
 ---
+- extendedWaitUntil:
+    visible:
+      id: auth.login.screen
+    timeout: 30000
 - assertVisible:
     id: auth.login.screen
 - assertVisible:
